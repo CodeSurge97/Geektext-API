@@ -1,0 +1,81 @@
+[
+
+    {
+        "title" : "Harry Potter and the Sorcerer's Stone",
+        "author" : "J.K. Rowling",
+        "isbn" : 9789129675351,
+        "genre" : [ "Action", "Adventure"],
+        "price" : 10.99,
+        "date" : "September 8, 1999",
+        "rating" : 5,
+        "img" : "images/pic4.jpg",
+        "description" : "Harry Potter has no idea how famous he is. That's because he's being raised by his miserable aunt and uncle who are terrified Harry will learn that he's really a wizard, just as his parents were. But everything changes when Harry is summoned to attend an infamous school for wizards, and he begins to discover some clues about his illustrious birthright.",
+        "publishing_info" : "Scholastic; 1st Edition edition",
+        "author_info" : "J.K. Rowling is the author of the record-breaking, multi-award-winning Harry Potter novels. Loved by fans around the world, the series has sold more than 500 million copies, been translated into over 80 different languages and made into eight blockbuster films. "
+    },
+    {
+        "title" : "Crazy Rich Asians",
+        "author" : "Kevin Kwan",
+        "isbn" : 9872412894368,
+        "genre" : [ "Romance"],
+        "price" : 9.95,
+        "date" : "May 20, 2014",
+        "rating" : 3.5,
+        "img" : "images/pic2.jpg",
+        "description" : "When New Yorker Rachel Chu agrees to spend the summer in Singapore with her boyfriend, Nicholas Young, she envisions a humble family home and quality time with the man she hopes to marry. But Nick has failed to give his girlfriend a few key details. One, that his childhood home looks like a palace; two, that he grew up riding in more private planes than cars; and three, that he just happens to be the country’s most eligible bachelor.",
+        "publishing_info" : "Anchor; Reprint edition",
+        "author_info" : "Kevin Kwan is the No. 1 New York Times bestselling author of Crazy Rich Asians, China Rich Girlfriend, and Rich People Problems. Crazy Rich Asians: The Movie will be released worldwide by Warner Bros. on August 15th, 2018. Born in Singapore, Kevin has called New York’s West Village home since 1995."
+    },
+    {
+        "title" : "The Outsider",
+        "author" : "Stephen King",
+        "isbn" : 147367640167,
+        "genre" : ["Horror"],
+        "price" : 17.75,
+        "date" : "May 22, 2018",
+        "rating" : 4.5,
+        "img" : "images/pic3.jpg",
+        "description" : "An eleven-year-old boy’s violated corpse is found in a town park. Eyewitnesses and fingerprints point unmistakably to one of Flint City’s most popular citizens. He is Terry Maitland, Little League coach, English teacher, husband, and father of two girls. Detective Ralph Anderson, whose son Maitland once coached, orders a quick and very public arrest. Maitland has an alibi, but Anderson and the district attorney soon add DNA evidence to go with the fingerprints and witnesses.",
+        "publishing_info" : "Scribner; First Editiion edition",
+        "author_info" : "Stephen King is the author of more than fifty books, all of them worldwide bestsellers. His recent work includes The Bill Hodges Trilogy, Revival, and Doctor Sleep. His novel 11/22/63 was named a top ten book of 2011 by The New York Times Book Review and won the Los Angeles Times Book Prize for Mystery/Thriller as well as the Best Hardcover Book Award from the International Thriller Writers Association. He is the recipient of the 2003 National Book Foundation Medal for Distinguished Contribution to American Letters."
+    },
+    {
+        "title" : "Fear: Trump in the White House",
+        "author" : "Bob Woodward",
+        "isbn" : 9781501175510,
+        "genre" : ["Politics"],
+        "price" : 19.47,
+        "date" : "September 11, 2018",
+        "rating" : 4.5,
+        "img" : "images/pic1.jpg",
+        "description" : "With authoritative reporting honed through eight presidencies from Nixon to Obama, author Bob Woodward reveals in unprecedented detail the harrowing life inside President Donald Trump’s White House and precisely how he makes decisions on major foreign and domestic policies. Woodward draws from hundreds of hours of interviews with firsthand sources, meeting notes, personal diaries, files and documents. The focus is on the explosive debates and the decision-making in the Oval Office, the Situation Room, Air Force One and the White House residence.",
+        "publishing_info" : "Simon & Schuster (September 11, 2018)",
+        "author_info" : "Bob Woodward is an associate editor of The Washington Post, where he has worked since 1971. He has shared in two Pulitzer Prizes, first in 1973 for the coverage of the Watergate scandal with Carl Bernstein, and second in 2003 as the lead reporter for coverage of the 9/11 terrorist attacks."
+    },
+    {
+        "title" : "Cracking the Coding Interview: 189 Programming Questions and Solutions",
+        "author" : "Gayle Laakmann McDowell",
+        "isbn" : 9788120340077,
+        "genre" : [ "Computers", "Technology"],
+        "price" : 34.75,
+        "date" : "July 31, 2009",
+        "rating" : 5,
+        "img" : "images/pic5.jpg",
+        "description" : "Learn how to uncover the hints and hidden details in a question, discover how to break down a problem into manageable chunks, develop techniques to unstick yourself when stuck, learn (or re-learn) core computer science concepts, and practice on 189 interview questions and solutions.",
+        "publishing_info" : "CareerCup; 6th edition (July 1, 2015)",
+        "author_info" : "Gayle Laakmann McDowell's interviewing expertise comes from vast experience on both sides of the desk. She has completed Software Engineering interviews with - and received offers from - Microsoft, Google, Amazon, Apple, IBM, Goldman Sachs, Capital IQ, and a number of other firms. Of these top companies, she has worked for Microsoft, Apple and Google, where she gained deep insight into each company's hiring practices."
+    },
+    {
+        "title" : "Head First Java, 2nd Edition",
+        "author" : "Kathy Sierra",
+        "isbn" : 9780596009205,
+        "genre" : [ "Computers", "Technology"],
+        "price" : 36.75,
+        "date" : "February 19, 2005",
+        "rating" : 4,
+        "img" : "images/pic6.jpg",
+        "description" : "Learning isn't something that just happens to you. It's something you do. You can't learn without pumping some neurons. Learning means building more mental pathways, bridging connections between new and pre-existing knowledge, recognizing patterns, and turning facts and information into knowledge (and ultimately, wisdom). Based on the latest research in cognitive science, neurobiology, and educational psychology, Head First books get your brain into learning mode.",
+        "publishing_info" : "O'Reilly Media; 2nd edition (February 19, 2005)",
+        "author_info" : "Kathy Sierra has been interested in learning theory since her days as a game developer (Virgin, MGM, Amblin'). More recently, she's been a master trainer for Sun Microsystems, teaching Sun's Java instructors how to teach the latest technologies to customers, and a lead developer of several Sun certification exams."
+    }
+]

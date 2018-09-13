@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <h1> {{ book.title }} </h1>
+    <p> Author: {{ book.author }} </p>
+    <img src="{{ url_for('static', filename=book.img) }}" alt="{{book.img}}" width="125" height="150" />
+    <p> Price: {{ book.price }} </p>
+    <p> Average Rating: {{ book.rating }} </p>
+    <p> Genre: {{ book.genre }} </p>
+    <p> Book Description: <br />
+        {{ book.description }} </p>
+</body>
+</html>
