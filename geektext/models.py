@@ -4,9 +4,15 @@ from geektext import db
 #it relates a book with the author that wrote it
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 author_book_relationship = db.Table('author_book_relationship',
     db.Column('book_isbn', db.BigInteger, db.ForeignKey('book.isbn'), primary_key=True),
     db.Column('author_name', db.String(100), db.ForeignKey('author.name'), primary_key=True)
+=======
+publish = db.Table('publish',
+    db.Column('book_isbn', db.BigInteger, db.ForeignKey('book.isbn')),
+    db.Column('author_name', db.String(100), db.ForeignKey('author.name'))
+>>>>>>> parent of f1ca096... 001to make the columns in publish primary keys
 =======
 publish = db.Table('publish',
     db.Column('book_isbn', db.BigInteger, db.ForeignKey('book.isbn')),
@@ -22,7 +28,11 @@ class Author(db.Model):
     name = db.Column(db.String(100))
     info = db.Column(db.Text)
 <<<<<<< HEAD
+<<<<<<< HEAD
     books = db.relationship('Book', secondary=author_book_relationship, backref=db.backref('authors'))
+=======
+    books = db.relationship('Book', secondary=publish, backref=db.backref('authors'))
+>>>>>>> parent of f1ca096... 001to make the columns in publish primary keys
 =======
     books = db.relationship('Book', secondary=publish, backref=db.backref('authors'))
 >>>>>>> parent of f1ca096... 001to make the columns in publish primary keys
