@@ -3,9 +3,15 @@ from geektext import db
 #author_book_relationship is a table with two columns book_isbn and author_name
 #it relates a book with the author that wrote it
 
+<<<<<<< HEAD
 author_book_relationship = db.Table('author_book_relationship',
     db.Column('book_isbn', db.BigInteger, db.ForeignKey('book.isbn'), primary_key=True),
     db.Column('author_name', db.String(100), db.ForeignKey('author.name'), primary_key=True)
+=======
+publish = db.Table('publish',
+    db.Column('book_isbn', db.BigInteger, db.ForeignKey('book.isbn')),
+    db.Column('author_name', db.String(100), db.ForeignKey('author.name'))
+>>>>>>> parent of f1ca096... 001to make the columns in publish primary keys
 )
 
 #Author is a table that contains every author in the database
@@ -15,7 +21,11 @@ class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     info = db.Column(db.Text)
+<<<<<<< HEAD
     books = db.relationship('Book', secondary=author_book_relationship, backref=db.backref('authors'))
+=======
+    books = db.relationship('Book', secondary=publish, backref=db.backref('authors'))
+>>>>>>> parent of f1ca096... 001to make the columns in publish primary keys
 
     def __repr__(self):
         return f"Author( name: '{self.name}' )"
