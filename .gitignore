@@ -1,2 +1,3 @@
 geektext/__pycache__/
-geektext/test.py
+test.py
+.gitignore
