@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+h1 {
+    font-size: 40px;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+    <h1>Geek Texts</h1>
+    <p>This page shows the books in the store</p>
+    {% for book in books %}
+        <h2> {{ book.title }} </h2>
+        <img src="{{ url_for('static', filename=book.img) }}" alt="{{book.img}}" width="125" height="150" />
+
+    {% endfor %}
+
+</body>
+</html>
