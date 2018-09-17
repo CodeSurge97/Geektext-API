@@ -1,21 +1,28 @@
 from geektext import db
 
-#relationship table between Author and Book. since it is a many to many relaitonship we need a new table called publish
+#author_book_relationship is a table with two columns book_isbn and author_name
+#it relates a book with the author that wrote it
 
-publish = db.Table('publish',
+author_book_relationship = db.Table('author_book_relationship',
     db.Column('book_isbn', db.BigInteger, db.ForeignKey('book.isbn'), primary_key=True),
     db.Column('author_name', db.String(100), db.ForeignKey('author.name'), primary_key=True)
 )
 
+#Author is a table that contains every author in the database
+#The attributes are: name, info, and books
+
 class Author(db.Model):
-    name = db.Column(db.String(100), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
     info = db.Column(db.Text)
-    books = db.relationship('Book', secondary=publish, backref=db.backref('authors')
+    books = db.relationship('Book', secondary=author_book_relationship, backref=db.backref('authors'))
 
     def __repr__(self):
         return f"Author( name: '{self.name}' )"
 
-transactions = db.Table('transactions',
+#order_book_relationship is a table that relates an order with the books that is contains
+#the attributes of order_book_relationship are: book_isbn, and order_id
+order_book_relationship = db.Table('order_book_relationship',
     db.Column('book_isbn', db.BigInteger, db.ForeignKey('book.isbn'), primary_key=True),
     db.Column('order_id', db.Integer, db.ForeignKey('order.id'), primary_key=True)
 )
@@ -38,7 +45,7 @@ class Book(db.Model):
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     order_date = db.Column(db.Date)
-    books = db.relationship('Book', secondary=transactions)
+    books = db.relationship('Book', secondary=order_book_relationship)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
