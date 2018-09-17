@@ -27,6 +27,9 @@ order_book_relationship = db.Table('order_book_relationship',
     db.Column('order_id', db.Integer, db.ForeignKey('order.id'), primary_key=True)
 )
 
+#The Book table has the following attributes:
+#isbn, title, date_pub, genre, rating, price, img, pub_info, book_description, comments, and authors.
+#the authors of the book can be used like any other attribute because of the backref in the Author table.
 class Book(db.Model):
     isbn = db.Column(db.BigInteger, primary_key=True)
     title = db.Column(db.String(100), unique=True, nullable=False)
@@ -42,6 +45,9 @@ class Book(db.Model):
     def __repr__(self):
         return f"Book( titel: '{self.title}' )"
 
+#The Order table stores the transactions in the store
+#the attributes of the Order table are: id, order_date, books, user_id, and you can also
+#access the user that made the order because of the backref in the User table
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     order_date = db.Column(db.Date)
@@ -51,19 +57,25 @@ class Order(db.Model):
     def __repr__(self):
         return f"Order( orderID: {self.id}, userID: {self.user_id}, date: {self.order_date})"
 
+#The User table stores the users in the site
+#the attributes of the User table are: id, name, username, email, password, address, orders, comments.
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), nullable=False)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
-    address = db.Column(db.String, nullable=False)
-    orders = db.relationship('Order', backref='user', lazy=True)
+    address = db.Column(db.String)
+    orders = db.relationship('Order', backref=db.backref('user'), lazy=True)
     comments = db.relationship('Comment', backref=db.backref('user'), lazy=True)
 
     def __repr__(self):
         return f"User( email: '{self.email}', username: '{self.username}')"
 
+
+#The Comment table stores the comments for each book
+#the attributes of the Comment table are: id, content, creation_date, book_isbn, and user_id
+#you can also access the user that made the comment and the book that the comment is about because of the relationships.
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text)
