@@ -3,14 +3,14 @@ from geektext import db
 #relationship table between Author and Book. since it is a many to many relaitonship we need a new table called publish
 
 publish = db.Table('publish',
-    db.Column('book_isbn', db.BigInteger, db.ForeignKey('book.isbn')),
-    db.Column('author_name', db.String(100), db.ForeignKey('author.name'))
+    db.Column('book_isbn', db.BigInteger, db.ForeignKey('book.isbn'), primary_key=True),
+    db.Column('author_name', db.String(100), db.ForeignKey('author.name'), primary_key=True)
 )
 
 class Author(db.Model):
     name = db.Column(db.String(100), primary_key=True)
     info = db.Column(db.Text)
-    books = db.relationship('Book', secondary=publish, backref=db.backref('authors'))
+    books = db.relationship('Book', secondary=publish, backref=db.backref('authors')
 
     def __repr__(self):
         return f"Author( name: '{self.name}' )"
