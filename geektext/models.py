@@ -35,7 +35,7 @@ class Book(db.Model):
     title = db.Column(db.String(100), unique=True, nullable=False)
     date_pub = db.Column(db.Date)
     genre = db.Column(db.String(100))
-    rating = db.Column(db.Integer)
+    rating = db.Column(db.Float)
     price = db.Column(db.Float)
     img = db.Column(db.String(100))
     pub_info = db.Column(db.Text)
@@ -80,6 +80,7 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text)
     creation_date = db.Column(db.Date)
+    rating = db.Column(db.Float)
     book_isbn = db.Column(db.BigInteger, db.ForeignKey('book.isbn'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
