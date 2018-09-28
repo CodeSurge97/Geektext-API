@@ -68,9 +68,24 @@ class User(db.Model):
     address = db.Column(db.String)
     orders = db.relationship('Order', backref=db.backref('user'), lazy=True)
     comments = db.relationship('Comment', backref=db.backref('user'), lazy=True)
+    credit_cards = db.relationship('CreditCard', backref=db.backref('user'), lazy=True)
 
     def __repr__(self):
         return f"User( email: '{self.email}', username: '{self.username}')"
+
+
+class CreditCard(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    card_type = db.Column(db.String(20))
+    # I actually don't know if this cvv attribute shoult be a string or an Integer
+    cvv = db.Column(db.Integer)
+    card_number = db.Column(db.String(16), unique=True)
+    exp_date = db.Column(db.Date)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __repr__(self):
+        return f"CreditCard( card_number: '{self.card_number[:4]}', user: '{self.user.name}')"
 
 
 #The Comment table stores the comments for each book
