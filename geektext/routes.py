@@ -4,7 +4,22 @@ from geektext.models import *
 import io
 from flask import request
 
+@app.route('/book/<int:isbn>')
+def book_page(isbn):
+    b = Book.query.filter_by(isbn=isbn)
+    return render_template('book.html', book=b.first_or_404())
 
+@app.route('/')
+def home():
+    books = Book.query.all()
+    return render_template('home.html', books=books)
+
+
+@app.route('/author/<int:id>')
+def author_page(id):
+    a = Author.query.get_or_404(id)
+    return render_template('author.html', author=a)
+    
 """
 @app.route('/books')
 def home():
@@ -26,24 +41,6 @@ def home():
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
     return response
 """
-
-@app.route('/book/<int:isbn>')
-def book_page(isbn):
-    b = Book.query.filter_by(isbn=isbn)
-    return render_template('book.html', book=b.first_or_404())
-
-@app.route('/')
-def home():
-    books = Book.query.all()
-    return render_template('home.html', books=books)
-
-
-@app.route('/author/<int:id>')
-def author_page(id):
-    a = Author.query.get_or_404(id)
-    return render_template('author.html', author=a)
-
-
 
 """
 @app.route('/books/<isbn>')
