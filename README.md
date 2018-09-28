@@ -1,9 +1,7 @@
 #### Dependencies: 
-* pip install flask</li>
-* pip install flask_sqlalchemy</li>
-* pip install Flask-Migrate</li>
+* pip3 install flask</li>
+* pip3 install flask_sqlalchemy</li>
+* pip3 install Flask-Migrate</li>
 
 #### To run, simply type in the command line:
-```python python3 run.py```
-
-
+```python3 run.py```
