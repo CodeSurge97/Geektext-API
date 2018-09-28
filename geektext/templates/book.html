@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <h1> {{ book.title }} </h1>
+    <img src="{{ url_for('static', filename=book.img) }}" alt="{{book.img}}" width="125" height="150" />
+    <p> Author:
+    <a href="{{ "http://localhost:5000/author/" + book.authors[0].id|string}}">{{ book.authors[0].name }}</a>
+    </p>
+    <p> Price: {{ book.price }} </p>
+    <p> Average Rating: {{ book.rating }} </p>
+    <p> Genre: {{ book.genre }} </p>
+    <p> Book Description: <br />
+        {{ book.book_description }} </p>
+    <h2> Comments: </h2>
+    {% for comment in book.comments %}
+        <h3> user: {{comment.user.username}} </h3>
+        <p> rating: {{comment.rating}} </p>
+        <p> {{comment.content}} </p>
+    {% endfor %}
+</body>
+</html>
