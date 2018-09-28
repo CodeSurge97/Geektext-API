@@ -1,12 +1,13 @@
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flask_login import current_user
-
+from flaskapp.models import User
 
 
 class RegistrationForm(FlaskForm):
+    name = StringField('Name', 
+                       validators=[DataRequired(), Length(max=30)])
     username = StringField('Username',
                            validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email',
