@@ -19,7 +19,6 @@ def home():
 def author_page(id):
     a = Author.query.get_or_404(id)
     return render_template('author.html', author=a)
-    
 
 @app.route('/book/by-title')
 def browse_by_title():
