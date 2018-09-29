@@ -1,17 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-</head>
-<body>
-    <h1> {{ author.name}} </h1>
-    <p> Author info: <br/> {{ author.info }} </p>
-    {% for book in author.books %}
-        <h2> {{ book.title }} </h2>
-        <img src="{{ url_for('static', filename=book.img) }}" alt="{{book.img}}" width="125" height="150" />
-        <p> Price: {{ book.price }} </p>
-        <p> Genre: {{ book.genre }} </p>
-        <p> Average Rating: {{ book.rating }} </p>
+{% extends "base.html" %}
 
-    {% endfor %}
-</body>
-</html>
+{% block content %}
+<head>
+<title>Books by {{ author.name }}</title></head>
+	<h1> {{ author.name}} </h1>
+	<p> Author info: <br/> {{ author.info }} </p>
+	{% for book in author.books %}
+	    <h2> {{ book.title }} </h2>
+	    <img src="{{ url_for('static', filename=book.img) }}" alt="{{book.img}}" width="125" height="150" />
+	    <p> Price: {{ book.price }} </p>
+	    <p> Genre: {{ book.genre }} </p>
+	    <p> Average Rating: {{ book.rating }} </p>
+	{% endfor %}
+
+{% endblock %}
+>>>>>>> b31c5f2b9d4c45241d79f09d0b55489b3892a70b

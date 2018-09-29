@@ -1,13 +1,8 @@
-blank for now -pm
-<br>
-Not any longer
+#### Dependencies: 
+* pip3 install flask</li>
+* pip3 install flask_sqlalchemy</li>
+* pip3 install Flask-Migrate</li>
 
-dependencies:
-<ul>  
-    <li>pip install flask</li>
-    <li>pip install flask_sqlalchemy</li>
-    <li>pip install Flask-Migrate</li>
-</ul>
+#### Running the program:
 
-To run:
-    `python3 run.py`
+To run, simply type in the command line: ```python3 run.py```
