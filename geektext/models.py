@@ -1,5 +1,11 @@
-from geektext import db
+from geektext import db, login_manager
+from flask_login import UserMixin
 
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+    
 #author_book_relationship is a table with two columns book_isbn and author_name
 #it relates a book with the author that wrote it
 
@@ -59,7 +65,7 @@ class Order(db.Model):
 
 #The User table stores the users in the site
 #the attributes of the User table are: id, name, username, email, password, address, orders, comments.
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), nullable=False)
     username = db.Column(db.String(20), unique=True, nullable=False)
