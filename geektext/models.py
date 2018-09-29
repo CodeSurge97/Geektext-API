@@ -65,7 +65,7 @@ class Order(db.Model):
 
 #The User table stores the users in the site
 #the attributes of the User table are: id, name, username, email, password, address, orders, comments.
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), nullable=False)
     username = db.Column(db.String(20), unique=True, nullable=False)
