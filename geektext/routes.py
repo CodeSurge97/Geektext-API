@@ -20,6 +20,20 @@ def author_page(id):
     a = Author.query.get_or_404(id)
     return render_template('author.html', author=a)
 
+@app.route('/book/by-title')
+def browse_by_title():
+    by_title = Book.query.order_by(Book.title)
+    return render_template('by_title.html', title=by_title)
+
+@app.route ('/book/by-rating-d')
+def browse_by_descending_rating():
+    by_rating = Book.query.order_by(Book.rating.desc())
+    return render_template('by_rating.html', rating=by_rating)
+
+@app.route ('/book/by-rating-a')
+def browse_by_ascending_rating():
+    by_rating = Book.query.order_by(Book.rating)
+    return render_template('by_rating.html', rating=by_rating)
 """
 @app.route('/books')
 def home():
