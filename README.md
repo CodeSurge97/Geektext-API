@@ -12,4 +12,4 @@
 
 #### Cleaning up cached and other garbage files:
 
-'''$ find . | grep -E "(__pycache__|\.pyc|\.pyo$|\.orig)" | xargs rm -rf'''
+```$ find . | grep -E "(__pycache__|\.pyc|\.pyo$|\.orig)" | xargs rm -rf```
