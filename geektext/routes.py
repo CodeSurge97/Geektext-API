@@ -11,7 +11,7 @@ def book_page(isbn):
     b = Book.query.filter_by(isbn=isbn)
     return render_template('book.html', book=b.first_or_404())
 
-@app.route('/')
+@app.route('/home')
 def home():
     books = Book.query.all()
     return render_template('index.html', books=books)
@@ -44,7 +44,7 @@ def browse_by_ascending_rating():
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-       return redirect('index.html')
+       return redirect('home')
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -52,20 +52,20 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
-        return redirect('login.html')
+        return redirect('login')
     return render_template('register.html', title='Register', form=form)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect('index.html')
+        return redirect('home')
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            return redirect('index.html')
+            return redirect('home')
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
@@ -74,7 +74,7 @@ def login():
 def logout():
     logout_user()
     flash('Logout successful')
-    return redirect('/')
+    return redirect('home')
 
 """
 LEAVE THIS CODE AT THE END
