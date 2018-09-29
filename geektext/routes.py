@@ -1,5 +1,5 @@
 import io
-from flask import Flask, request, render_template, make_response, jsonify, url_for, send_file
+from flask import Flask, flash, request, redirect, render_template, make_response, jsonify, url_for, send_file
 from geektext import app, db, bcrypt
 from geektext.models import *
 from geektext.forms import (RegistrationForm, LoginForm)
@@ -73,7 +73,8 @@ def login():
 @app.route("/logout")
 def logout():
     logout_user()
-    return redirect('index.html')
+    flash('Logout successful')
+    return redirect('/')
 
 """
 LEAVE THIS CODE AT THE END
