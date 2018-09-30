@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+
+<body>
+	<ul>
+	    {% for b in in_cart %}    
+	    	<img src="{{ url_for('static', filename=b.img) }}" alt="{{b.img}}" width="125" height="150" />      	
+		    <p> Author: {{ b.name }}</p>
+		    <p> Price: {{ b.price }} </p>
+		    <p> Genre: {{ b.genre }} </p>
+		    <p> Average Rating: {{ b.rating }} </p>
+	    {% endfor %}
+	</ul>
+</body>
+{% endblock %}
+

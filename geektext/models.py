@@ -75,6 +75,7 @@ class User(db.Model, UserMixin):
     orders = db.relationship('Order', backref=db.backref('user'), lazy=True)
     comments = db.relationship('Comment', backref=db.backref('user'), lazy=True)
     credit_cards = db.relationship('CreditCard', backref=db.backref('user'), lazy=True)
+    cart = db.relationship('Cart', backref=db.backref('user'), lazy=True)
 
     def __repr__(self):
         return f"User( email: '{self.email}', username: '{self.username}')"
@@ -85,6 +86,7 @@ class CreditCard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     card_type = db.Column(db.String(20))
     # I actually don't know if this cvv attribute shoult be a string or an Integer
+    # Probably an integer so we can hash it (security). Same with credit card - Pablo
     cvv = db.Column(db.Integer)
     card_number = db.Column(db.String(16), unique=True)
     exp_date = db.Column(db.Date)
@@ -104,6 +106,13 @@ class Comment(db.Model):
     rating = db.Column(db.Float)
     book_isbn = db.Column(db.BigInteger, db.ForeignKey('book.isbn'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+
+class Cart(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    book_isbn = db.Column(db.BigInteger, db.ForeignKey('book.isbn'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
 
     def __repr__(self):
         return f"Comment( commentID: '{self.id}', book: '{self.book_isbn}', userID: '{self.user_id}')"

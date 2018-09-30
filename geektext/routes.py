@@ -131,6 +131,20 @@ def logout():
     flash('Logout successful')
     return redirect('home')
 
+# SHOPPING CART:
+
+"""
+FIX THE LOGIC FOR THE ELSE AND RETURN STATEMENTS
+@app.route('/addcart/<int:product_id>', methods=['GET', 'POST'])
+def display(product_id):
+    if Cart.query.filter_by(isbn=product_id).first() is None:   #query is empty - no isbn matches the product id
+        return render_template('cart_notfound.html', message='A book with isbn {} does not exist'.format(product_id))
+    else:
+        #query to add the book to the user's shopping cart
+    
+    #render the shopping cart here:
+    return render_template('post.html', in_cart=in_cart)
+"""
 
 """
 LEAVE THIS CODE AT THE END

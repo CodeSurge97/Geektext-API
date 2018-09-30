@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html>
-
-
-
 	{% block content %}
 	<head>
+		
 		{% if title %}
 		<title>
 	        <title>{{ title }}</title>
@@ -13,17 +11,8 @@
 	    {% endif %}</title>
 	</head>
 	<body>
-	</body>
-	<!-- 	{% from "_formhelpers.html" import render_field %}
-	<form method=post>
-	  	<dl>
-		    {{ render_field(form.select) }}
-		    <p>
-		    {{ render_field(form.search) }}
-	  	</dl>
-	  	<p><input type=submit value=Search>
-	</form> -->
 
+	    </ul>
+	</body>
 	{% endblock %}
 </html>
-
