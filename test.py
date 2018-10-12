@@ -17,7 +17,6 @@ def create():
 
 def get_random_date():
     d = date(year=random.randint(1999,2018), day=random.randint(1,30), month=random.randint(1,12))
-    print(d)
     return d
 
 def addFromJson():
@@ -33,8 +32,10 @@ def addFromJson():
         #Declare that author a wrote the book b
         a.books.append(b)
         db.session.add(b)
-        db.session.add(a)
+        if len(Author.query.filter_by(name = a.name).all()):
+            db.session.add(a)
         db.session.commit()
+        print(f"adding book {b.title}")
 
     #Create some users
     user1 = User(name='Tomas Ortega', username='tomsOrtega', email='torte007@fiu.edu', password='1234567', address='7 Pumpkin Hill St. Fresh Meadows, NY 11365')
@@ -60,22 +61,23 @@ def addFromJson():
     user4.orders.append(order1)
     db.session.add(order1)
     order2 = Order(order_date=date.today())
-    order2.books.append(Book.query.filter_by(title="Head First Java, 2nd Edition").first())
+    order2.books.append(Book.query.filter_by(title="Cracking the Coding Interview: 189 Programming Questions and Solutions").first())
     order2.books.append(Book.query.filter_by(title="Harry Potter and the Sorcerer's Stone").first())
     order2.books.append(Book.query.filter_by(title="Crazy Rich Asians").first())
     user1.orders.append(order2)
     db.session.add(order2)
     order3 = Order(order_date=date.today())
-    order3.books.append(Book.query.filter_by(title="Head First Java, 2nd Edition").first())
+    order3.books.append(Book.query.filter_by(title="Cracking the Coding Interview: 189 Programming Questions and Solutions").first())
     user2.orders.append(order3)
     db.session.add(order3)
 
     #add some comments
-    isbn = Book.query.filter_by(title="Head First Java, 2nd Edition").first().isbn
+    isbn = Book.query.filter_by(title="Cracking the Coding Interview: 189 Programming Questions and Solutions").first().isbn
     comment1 = Comment(content="the book is great I love it!", creation_date=date.today())
     comment1.book_isbn = isbn
     comment1.user_id = user4.id
     db.session.add(comment1)
+    print(Comment.query.filter_by(book_isbn=isbn).first())
 
     isbn2 = Book.query.filter_by(title="The Outsider").first().isbn
     comment2 = Comment(content="This book is soo scary!!", creation_date=date.today())
@@ -86,7 +88,11 @@ def addFromJson():
     comment3 = Comment(content="Hello world!", creation_date=date.today(), book_isbn=isbn)
     comment3.user_id = user2.id
     db.session.add(comment3)
+
     db.session.commit()
+
+    #now we can add some credit credit cards
+    
 
 create()
 addFromJson()

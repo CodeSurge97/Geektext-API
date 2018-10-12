@@ -7,16 +7,63 @@ from geektext.models import User
 from flask_login import login_user, current_user, logout_user, login_required
 
 
-@app.route('/home')
+@app.route('/books')
 def home():
-    books = Book.query.all()
-    return render_template('index.html', books=books)
+    books = Book.query.order_by(Book.title).all()
+    print("this is by publication date")
+    print(books)
+    data = []
+    for book in books:
+        b = { 'title': book.title,
+        'isbn': book.isbn,
+        'genre': book.genre,
+        'rating': book.rating,
+        'price' : book.price,
+        'img' : url_for('static', filename=book.img),
+        'author' : book.authors[0].name }
+        data.append(b)
+    response = make_response(jsonify(data))
+    response.headers['Content-Type'] = 'application/json'
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
 
 
 @app.route('/book/<int:isbn>')
 def book_page(isbn):
-    b = Book.query.filter_by(isbn=isbn)
-    return render_template('book.html', book=b.first_or_404())
+    book = Book.query.filter_by(isbn=isbn).first()
+    #we need to create a dictionary or something for each comment and put it in a list and then put that in the comments of the book or something
+    comments = []
+    for comment in book.comments:
+        c = {
+            'id' : comment.id,
+            'content' : comment.content,
+            'rating' : comment.rating,
+            'book_isbn' : comment.book_isbn,
+            'user_id' : comment.user_id,
+            'date' : comment.creation_date
+
+        }
+        comments.append(c)
+    
+    b = {
+        'title': book.title,
+        'isbn': book.isbn,
+        'genre': book.genre,
+        'rating': book.rating,
+        'price' : book.price,
+        'img' : url_for('static', filename=book.img),
+        'author' : book.authors[0].name,
+        'description' : book.book_description,
+        'comments' : comments,
+        'pub_info' : book.pub_info,
+        'date_pub' : book.date_pub
+        }
+    response = make_response(jsonify(b))
+    response.headers['Content-Type'] = 'application/json'
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
 
 
 @app.route('/author/<int:id>')
@@ -42,26 +89,90 @@ def browse_by_author():
 
 @app.route('/book/by-price-d')
 def browse_by_descending_price():
-    by_price = Book.query.order_by(Book.price.desc())
-    return render_template('by_price.html', price=by_price)
+    books_by_price = Book.query.order_by(Book.price.desc())
+    print("this is by price")
+    print(books_by_price)
+    data = []
+    for book in books_by_price:
+        b = { 'title': book.title,
+        'isbn': book.isbn,
+        'genre': book.genre,
+        'rating': book.rating,
+        'price' : book.price,
+        'img' : url_for('static', filename=book.img),
+        'author' : book.authors[0].name }
+        data.append(b)
+    response = make_response(jsonify(data))
+    response.headers['Content-Type'] = 'application/json'
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
 
 
 @app.route('/book/by-price-a')
 def browse_by_ascending_price():
-    by_price = Book.query.order_by(Book.price)
-    return render_template('by_price.html', price=by_price)
+    books_by_price = Book.query.order_by(Book.price)
+    print("this is by price")
+    print(books_by_price)
+    data = []
+    for book in books_by_price:
+        b = { 'title': book.title,
+        'isbn': book.isbn,
+        'genre': book.genre,
+        'rating': book.rating,
+        'price' : book.price,
+        'img' : url_for('static', filename=book.img),
+        'author' : book.authors[0].name }
+        data.append(b)
+    response = make_response(jsonify(data))
+    response.headers['Content-Type'] = 'application/json'
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
 
 
 @app.route ('/book/by-rating-d')
 def browse_by_descending_rating():
-    by_rating = Book.query.order_by(Book.rating.desc())
-    return render_template('by_rating.html', rating=by_rating)
+    books_by_rating = Book.query.order_by(Book.rating.desc())
+    print("this is by price")
+    print(books_by_rating)
+    data = []
+    for book in books_by_rating:
+        b = { 'title': book.title,
+        'isbn': book.isbn,
+        'genre': book.genre,
+        'rating': book.rating,
+        'price' : book.price,
+        'img' : url_for('static', filename=book.img),
+        'author' : book.authors[0].name }
+        data.append(b)
+    response = make_response(jsonify(data))
+    response.headers['Content-Type'] = 'application/json'
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
 
 
 @app.route ('/book/by-rating-a')
 def browse_by_ascending_rating():
-    by_rating = Book.query.order_by(Book.rating)
-    return render_template('by_rating.html', rating=by_rating)
+    books_by_rating = Book.query.order_by(Book.rating)
+    print("this is by price")
+    print(books_by_rating)
+    data = []
+    for book in books_by_rating:
+        b = { 'title': book.title,
+        'isbn': book.isbn,
+        'genre': book.genre,
+        'rating': book.rating,
+        'price' : book.price,
+        'img' : url_for('static', filename=book.img),
+        'author' : book.authors[0].name }
+        data.append(b)
+    response = make_response(jsonify(data))
+    response.headers['Content-Type'] = 'application/json'
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
 
 """
 FIXME
@@ -69,19 +180,19 @@ FIXME
 def search_bar():
     search = SearchForm(request.form)
     if request.method == 'POST':
-        return search_results(search) 
+        return search_results(search)
     return render_template('base.html', form=search)
- 
- 
+
+
 @app.route('/results')
 def search_results(search):
     results = []
     search_string = search.data['search']
- 
+
     if search.data['search'] == '':
         query = db_session.query(Author)
         results = query.all()
- 
+
     if not results:
         flash('No results found!')
         return redirect('/')
@@ -132,29 +243,6 @@ def logout():
     return redirect('home')
 
 
-"""
-LEAVE THIS CODE AT THE END
-
-@app.route('/books')
-def home():
-    books = Book.query.order_by(Book.date_pub).all()
-    print(books)
-    data = []
-    for book in books:
-        b = { 'title': book.title,
-        'isbn': book.isbn,
-        'genre': book.genre,
-        'rating': book.rating,
-        'price' : book.price,
-        'img' : url_for('static', filename=book.img),
-        'author' : book.authors[0].name }
-        data.append(b)
-    response = make_response(jsonify(data))
-    response.headers['Content-Type'] = 'application/json'
-    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-    return response
-"""
 
 """
 @app.route('/books/<isbn>')
