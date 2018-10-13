@@ -1,10 +1,29 @@
 import io
-from flask import Flask, flash, request, redirect, render_template, make_response, jsonify, url_for, send_file
+import sqlite3
+
+from flask import Flask, flash, session, request, redirect, render_template, make_response, jsonify, url_for, send_file
 from geektext import app, db, bcrypt
 from geektext.models import *
-from geektext.forms import RegistrationForm, LoginForm#, SearchForm
+from geektext.forms import RegistrationForm, LoginForm # SearchForm
 from geektext.models import User
 from flask_login import login_user, current_user, logout_user, login_required
+import time
+
+def getLoginDetails():
+    with sqlite3.connect('site.db') as conn:
+        cur = conn.cursor()
+        if 'email' not in session:
+            loggedIn = False
+            name = ''
+            noOfItems = 0
+        else:
+            loggedIn = True
+            cur.execute("SELECT id, name FROM user WHERE email = '" + session['email'] + "'")
+            uid, name = cur.fetchone()
+            cur.execute('SELECT count(isbn) FROM cart WHERE id = ' + str(uid))
+            noOfItems = cur.fetchone()[0]
+    conn.close()
+    return loggedIn, name, noOfItems
 
 
 @app.route('/home')
@@ -25,7 +44,7 @@ def author_page(id):
     return render_template('author.html', author=a)
 
 
-#BROWSING/SORTING:
+# BROWSING/SORTING:
 
 
 @app.route('/book/by-title')
@@ -91,13 +110,13 @@ def search_results(search):
  """
 
 
-#PROFILE MANAGEMENT:
+# PROFILE MANAGEMENT:
 
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-       return redirect('home')
+        return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -105,21 +124,21 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
-        return redirect('login')
+        return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect('home')
+        return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            return redirect('home')
+            return redirect(url_for('home'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
@@ -129,22 +148,49 @@ def login():
 def logout():
     logout_user()
     flash('Logout successful')
-    return redirect('home')
+    return redirect('root')
 
 # SHOPPING CART:
 
-"""
-FIX THE LOGIC FOR THE ELSE AND RETURN STATEMENTS
-@app.route('/addcart/<int:product_id>', methods=['GET', 'POST'])
-def display(product_id):
-    if Cart.query.filter_by(isbn=product_id).first() is None:   #query is empty - no isbn matches the product id
-        return render_template('cart_notfound.html', message='A book with isbn {} does not exist'.format(product_id))
+
+@app.route("/addToCart/<int:isbn>")
+def addToCart(isbn):
+    if 'email' not in session:
+        return redirect(url_for('login'))
     else:
-        #query to add the book to the user's shopping cart
-    
-    #render the shopping cart here:
-    return render_template('post.html', in_cart=in_cart)
-"""
+        # productId = int(request.args.get('isbn'))
+        with sqlite3.connect('site.db') as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT id FROM user WHERE email = '" + session['email'] + "'")
+            userId = cur.fetchone()[0]
+            try:
+                cur.execute("INSERT INTO carts (userId, productId) VALUES (?, ?)", (userId, isbn))
+                conn.commit()
+                msg = "Added successfully"
+            except:
+                conn.rollback()
+                msg = "Error occured"
+        conn.close()
+        return redirect(url_for('home'))
+
+
+@app.route("/cart")
+def cart():
+    if 'email' not in session:
+        return redirect(url_for('login'))
+    loggedIn, firstName, noOfItems = getLoginDetails()
+    email = session['email']
+    with sqlite3.connect('site.db') as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT id FROM user WHERE email = '" + email + "'")
+        userId = cur.fetchone()[0]
+        cur.execute("SELECT book.id, book.name, book.price, book.img FROM book, cart WHERE book.id = cart.productId AND cart.userId = " + str(userId))
+        products = cur.fetchall()
+    totalPrice = 0
+    for row in products:
+        totalPrice += row[2]
+    return render_template("cart.html", products=products, totalPrice=totalPrice, loggedIn=loggedIn, noOfItems=noOfItems)
+
 
 """
 LEAVE THIS CODE AT THE END
