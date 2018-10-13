@@ -2,7 +2,7 @@ import io
 from flask import Flask, flash, request, redirect, render_template, make_response, jsonify, url_for, send_file
 from geektext import app, db, bcrypt
 from geektext.models import *
-from geektext.forms import (RegistrationForm, LoginForm)
+from geektext.forms import RegistrationForm, LoginForm, EditUserProfileForm
 from geektext.models import User
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -48,11 +48,11 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(name=form.name.data, username=form.username.data, email=form.email.data, password=hashed_password)
+        user = User(name=form.name.data, username=form.username.data, email=form.email.data, password=hashed_password, address=form.home_address.data)
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
-        return redirect('login')
+        return redirect('home')
     return render_template('register.html', title='Register', form=form)
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -69,6 +69,35 @@ def login():
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
+
+@app.route('/user/<username>', methods=['GET', 'POST'])
+def UserProfile(username):
+    user = User.query.filter_by(username=username).first()    
+    return render_template('profile.html', user=user)
+
+@app.route("/Edit_Profile", methods=['GET', 'POST'])
+@login_required
+def EditProfile():
+    form = EditUserProfileForm() 
+    if form.validate_on_submit():  
+        current_user.name = form.name.data        
+        current_user.username = form.username.data        
+        current_user.email = form.email.data
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        current_user.password = hashed_password    
+        current_user.address = form.home_address.data 
+        #user = User(name=form.name.data, username=form.username.data, email=form.email.data, password=form.password.data, address=form.home_address.data)       
+        db.session.add(current_user)
+        db.session.commit()        
+        flash('Your profile has been updated.')        
+        return redirect(url_for('UserProfile', username=current_user.username))
+    form.name.data = current_user.name    
+    form.username.data = current_user.username   
+    form.email.data = current_user.email
+    form.password.data = current_user.password
+    form.home_address.data = current_user.address 
+    return render_template('edit_profile.html', form=form)
+
 
 @app.route("/logout")
 def logout():

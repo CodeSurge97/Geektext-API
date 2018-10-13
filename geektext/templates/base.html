@@ -10,6 +10,13 @@
 	        {% else %}
 	        <title>Geek Text</title>
 	    {% endif %}</title>
+	    {% if current_user.is_authenticated() %}
+	    <li>    
+	    	<a href="{{ url_for('UserProfile', username=current_user.username) }}">        
+	    	   Profile    
+	        </a>
+	    </li>
+	    {% endif %}
 	</head>
 	<body>
 	</body>

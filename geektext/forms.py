@@ -15,6 +15,7 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
+    home_address = StringField('Home Address', validators=[DataRequired(), Length(max=100)])
     submit = SubmitField('Sign Up')
 
     def validate_username(self, username):
@@ -34,6 +35,20 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
+
+class EditUserProfileForm(FlaskForm):
+   #shipping_address = StringField('Shipping Address', validators=[DataRequired(), Length(max=100)])
+    name = StringField('Name', 
+                       validators=[ Length(max=30)])
+    username = StringField('Username',
+                           validators=[Length(min=2, max=20)])
+    email = StringField('Email',
+                        validators=[Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password')])
+    home_address = StringField('Home Address', validators=[Length(max=100)])
+    submit = SubmitField('Submit')
 
 
 
