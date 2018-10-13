@@ -37,15 +37,15 @@ def book_page(isbn):
     for comment in book.comments:
         c = {
             'id' : comment.id,
-            'content' : comment.content,
+            'contents' : comment.content,
             'rating' : comment.rating,
-            'book_isbn' : comment.book_isbn,
             'user_id' : comment.user_id,
-            'date' : comment.creation_date
+            'date' : comment.creation_date,
+            'username' : comment.user.username
 
         }
         comments.append(c)
-    
+
     b = {
         'title': book.title,
         'isbn': book.isbn,
@@ -54,6 +54,7 @@ def book_page(isbn):
         'price' : book.price,
         'img' : url_for('static', filename=book.img),
         'author' : book.authors[0].name,
+        'author_id' : book.authors[0].id,
         'description' : book.book_description,
         'comments' : comments,
         'pub_info' : book.pub_info,
@@ -68,9 +69,71 @@ def book_page(isbn):
 
 @app.route('/author/<int:id>')
 def author_page(id):
-    a = Author.query.get_or_404(id)
-    return render_template('author.html', author=a)
+    author = Author.query.get_or_404(id)
+    #we need to make a list of books by the author
+    books = []
+    for book in author.books:
+        b = {
+            'title': book.title,
+            'isbn': book.isbn,
+            'genre': book.genre,
+            'rating': book.rating,
+            'price' : book.price,
+            'img' : url_for('static', filename=book.img),
+            'author' : book.authors[0].name,
+            'author_id' : book.authors[0].id,
+            'description' : book.book_description,
+            'comments' : comments,
+            'pub_info' : book.pub_info,
+            'date_pub' : book.date_pub
+            }
+        books.append(b)
 
+    #we need to send json to the ui
+    a = {
+        'name' : author.name,
+        'author_info' : author.info,
+        'books' : books,
+
+    }
+
+    response = make_response(jsonify(a))
+    response.headers['Content-Type'] = 'application/json'
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
+
+#Comments and stuff
+
+@app.route('/comment/<int:user_id>', methods=['GET', 'POST', 'OPTIONS'])
+def add_comment(user_id):
+    if request.method == 'POST':
+        user = User.query.get_or_404(user_id)
+        print("this is the data from react")
+        print(request)
+        response = make_response(jsonify("hello"))
+        print(request.get_json())
+    elif request.method == 'OPTIONS':
+        print(40*"-")
+        print("this is the request 'path'")
+        print(request.path)
+        print(40*"-")
+        print("this is the request 'url'")
+        print(request.url)
+        print(40*"-")
+        print("this is the request 'data'")
+        print(request.data)
+        print(40*"-")
+        print("this is the request 'headers'")
+        print(request.headers)
+        print(40*"-")
+        response = make_response(jsonify("Fuuuck"))
+        response.headers['Content-Type'] = 'application/json'
+        response.headers['Access-Control-Allow-Origin'] = request.headers['Origin']
+        response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-PINGOTHER'
+        response.headers['Access-Control-Max-Age'] = '86400'
+    return response
 
 #BROWSING/SORTING:
 
