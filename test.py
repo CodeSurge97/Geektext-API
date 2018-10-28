@@ -28,7 +28,7 @@ def addFromJson():
         p = float(book["price"])
         b = Book(isbn=book["isbn"], genre=book["genre"], title=book["title"], img=book["img"], date_pub=d, price=p, book_description=book["description"], pub_info=book["publishing_info"], rating=book["rating"])
         #Create a new author a
-        a = Author(name=book["author"], info=book['author_info'])
+        a = Author(name=book["author"], info=book['author_info'], img=book['author_pic'])
         #Declare that author a wrote the book b
         db.session.add(b)
         print(f"the length is: {len(Author.query.filter_by(name = a.name).all())}")
@@ -115,9 +115,11 @@ def addFromJson():
     comment7 = Comment(content="Hausdacher nachmittag erkundigte flo hob kindlichen. Nachdem traurig dritten das meinung standen von ihn auf ubrigen.", creation_date=date.today(), book_isbn=isbn, rating=5)
     comment7.user_id = user2.id
     db.session.add(comment7)
+    db.session.commit()
 
-
-
+    #new cart
+    c = Cart()
+    db.session.add(c)
     db.session.commit()
 
     #now we can add some credit credit cards

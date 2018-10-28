@@ -21,6 +21,7 @@ class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     info = db.Column(db.Text)
+    img = db.Column(db.String(100))
     books = db.relationship('Book', secondary=author_book_relationship, backref=db.backref('authors'))
 
     def __repr__(self):

@@ -57,6 +57,7 @@ def book_page(isbn):
         'img' : url_for('static', filename=book.img),
         'author' : book.authors[0].name,
         'author_id' : book.authors[0].id,
+        'author_info': book.authors[0].info,
         'description' : book.book_description,
         'comments' : book_comments,
         'pub_info' : book.pub_info,
@@ -95,6 +96,7 @@ def author_page(id):
         'name' : author.name,
         'author_info' : author.info,
         'books' : books,
+        'author_pic' : author.img,
 
     }
 
