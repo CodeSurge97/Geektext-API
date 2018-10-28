@@ -1,5 +1,5 @@
 import io
-from flask import Flask, flash, request, redirect, render_template, make_response, jsonify, url_for, send_file
+from flask import Flask, flash, request, redirect, render_template, make_response, jsonify, url_for, send_file, session
 from geektext import app, db, bcrypt
 from geektext.models import *
 from geektext.forms import RegistrationForm, LoginForm#, SearchForm
@@ -105,11 +105,28 @@ def author_page(id):
     return response
 
 #Comments and stuff
+def print_request(request):
+    print(100*"-")
+    print(session)
+    print(40*"-")
+    print("this is the request 'path'")
+    print(request.path)
+    print(40*"-")
+    print("this is the request 'url'")
+    print(request.url)
+    print(40*"-")
+    print("this is the request 'data'")
+    print(request.data)
+    print(40*"-")
+    print("this is the request 'headers'")
+    print(request.headers)
+    print(40*"-")
 
 @app.route('/comment/<int:user_id>', methods=['GET', 'POST', 'OPTIONS'])
 def add_comment(user_id):
     if request.method == 'POST':
-        user = User.query.get_or_404(user_id)
+        print_request(request)
+        user = User.query.get(user_id)
         comment = request.get_json()
         c = Comment(content=comment['content'], creation_date=date.today(), book_isbn=comment['isbn'], rating=comment['rating'], user_id=comment['user_id'])
         print(c)
@@ -117,19 +134,7 @@ def add_comment(user_id):
         db.session.commit()
         response = make_response(jsonify("hello"))
     elif request.method == 'OPTIONS':
-        print(40*"-")
-        print("this is the request 'path'")
-        print(request.path)
-        print(40*"-")
-        print("this is the request 'url'")
-        print(request.url)
-        print(40*"-")
-        print("this is the request 'data'")
-        print(request.data)
-        print(40*"-")
-        print("this is the request 'headers'")
-        print(request.headers)
-        print(40*"-")
+        print_request(request)
         response = make_response(jsonify(""))
         response.headers['Content-Type'] = 'application/json'
         response.headers['Access-Control-Allow-Origin'] = request.headers['Origin']
@@ -149,8 +154,25 @@ def browse_by_title():
 
 @app.route('/book/by-author')
 def browse_by_author():
-    by_author = Author.query.order_by(Author.name)
-    return render_template('by_author.html', author=by_author)
+    authors = Author.query.order_by(Author.name)
+    data = []
+    for author in authors:
+        print(f"this is the name of the author {author.name}")
+        for book in author.books:
+            print(f"this is the title: {book.title}")
+            b = { 'title': book.title,
+            'isbn': book.isbn,
+            'genre': book.genre,
+            'rating': book.rating,
+            'price' : book.price,
+            'img' : url_for('static', filename=book.img),
+            'author' : book.authors[0].name }
+            data.append(b)
+    response = make_response(jsonify(data))
+    response.headers['Content-Type'] = 'application/json'
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
 
 
 @app.route('/book/by-price-d')
@@ -218,20 +240,58 @@ def browse_by_descending_rating():
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
     return response
 
+@app.route("/get-cart/<int:id>", methods=['GET', 'POST', 'OPTIONS'])
+def get_cart(id):
+    response = make_response()
+    if request.method == 'GET':
+        if 'cart_id' in session:
+            print("there is a cookie in the request")
+            cart_id = session["cart_id"]
+            cart = Cart.query.get(cart_id)
+            data = []
+            for item in cart.cart_items:
+                c = {
+                    'count': item.count,
+                    'book': item.book_isbn
+                }
+                data.append(c)
+        else:
+            print("there is no session")
+            cart_id = id
+            cart = Cart.query.get(cart_id)
+            data = []
+            for item in cart.cart_items:
+                c = {
+                    'count': item.count,
+                    'book': item.book_isbn
+                }
+                data.append(c)
+        response = make_response(jsonify(data))
+        print(f"sending the itmes {data} to the ui")
+        response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    elif request.method == 'OPTIONS':
+        response = make_response(jsonify(""))
+        response.headers['Content-Type'] = 'application/json'
+        response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+        response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-PINGOTHER'
+        response.headers['Access-Control-Max-Age'] = '86400'
+    return response
 
 @app.route("/add-to-cart/<int:user_id>", methods=['GET', 'POST', 'OPTIONS'])
 def add_to_cart(user_id):
     if request.method == 'POST':
         response = make_response()
+        print_request(request)
         data = request.get_json()
         #we need to add the new book to the shopping cart
         #data contains the information about the book that we need to add to the cart
         book_isbn = data["isbn"]
         #we need to check if there is a cookie with id of the cart. if not then we need to create a new cart
-        if 'cart_id' in request.cookies:
+        if True:
             print("there is a cookie in the request")
             print(f"the cookie is {request.cookies.get('cart_id')}")
-            cart_id = request.cookies.get("cart_id")
+            cart_id = user_id
             cart = Cart.query.get(cart_id)
             #now we need to know if the book is already in the cart or not
             added = False
@@ -246,6 +306,7 @@ def add_to_cart(user_id):
             if not added:
                 print("the book is not in the shopping cart")
                 new_item = CartItem(count=1, cart_id=cart_id, book_isbn=book_isbn)
+                db.session.add(new_item)
                 db.session.commit()
                 added = True
         else:
@@ -265,12 +326,12 @@ def add_to_cart(user_id):
             new_item = CartItem(count=1, cart_id=id, book_isbn=book_isbn)
             print(f"creating a new cart item to store the book \n{new_item}")
             db.session.commit()
-            response.set_cookie('cart_id', str(id))
-
+            session['cart_id'] = id
+        response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
     elif request.method == 'OPTIONS':
         response = make_response(jsonify(""))
         response.headers['Content-Type'] = 'application/json'
-        response.headers['Access-Control-Allow-Origin'] = request.headers['Origin']
+        response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
         response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-PINGOTHER'
         response.headers['Access-Control-Max-Age'] = '86400'

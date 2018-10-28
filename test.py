@@ -30,10 +30,16 @@ def addFromJson():
         #Create a new author a
         a = Author(name=book["author"], info=book['author_info'])
         #Declare that author a wrote the book b
-        a.books.append(b)
         db.session.add(b)
-        if len(Author.query.filter_by(name = a.name).all()):
+        print(f"the length is: {len(Author.query.filter_by(name = a.name).all())}")
+        if len(Author.query.filter_by(name = a.name).all()) < 1:
+            print("adding a new author")
             db.session.add(a)
+            a.books.append(b)
+        else:
+            print("the author already exists")
+            a = Author.query.filter_by(name = a.name).first()
+            a.books.append(b)
         db.session.commit()
         print(f"adding book {b.title}")
 
