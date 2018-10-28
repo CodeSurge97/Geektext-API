@@ -1,13 +1,12 @@
 import io
 import sqlite3
-
 from flask import Flask, flash, session, request, redirect, render_template, make_response, jsonify, url_for, send_file
 from geektext import app, db, bcrypt
 from geektext.models import *
 from geektext.forms import RegistrationForm, LoginForm # SearchForm
 from geektext.models import User
 from flask_login import login_user, current_user, logout_user, login_required
-import time
+
 
 def getLoginDetails():
     with sqlite3.connect('site.db') as conn:
@@ -132,12 +131,13 @@ def register():
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-    form = LoginForm()
+    form = LoginForm(request.form)
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
-            next_page = request.args.get('next')
+        user = User.query.filter_by(email=request.form['email']).first()
+        if user is not None and bcrypt.check_password_hash(user.password, request.form['password']):
+            session['logged_in'] = True
+            login_user(user)
+            flash('You were logged in')
             return redirect(url_for('home'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
@@ -158,20 +158,71 @@ def addToCart(isbn):
     if 'email' not in session:
         return redirect(url_for('login'))
     else:
+        response = make_response()
+        data = request.get_json()
+        # we need to add the new book to the shopping cart
+        # data contains the information about the book that we need to add to the cart
+        book_isbn = data['isbn']
+        # we need to check if there is a cookie with id of the cart. if not then we need to create a new cart
+        if 'email' in session:
+            print("there is a email in the request")
+            print("the cookie is {request.cookies.get('email')}")
+            cart_id = session["cart_id"]
+            new_cart = Cart.query.get(cart_id)
+            # now we need to know if the book is already in the cart or not
+            added = False
+            for item in new_cart.cart_items:
+                if book_isbn == item.book_isbn:
+                    print("The book {item.book.title} is already in the shopping cart")
+                    # we need to add 1 to the count attribute in CartItem
+                    item.count = item.count + 1
+                    db.session.add(item)
+                    db.session.commit()
+                    added = True
+                    break
+            if not added:
+                print("the book is not in the shopping cart")
+                new_item = CartItem(count=1, cart_id=cart_id, book_isbn=book_isbn)
+                db.session.add(new_item)
+                db.session.commit()
+                added = True
+        else:
+            print("there is no cookie")
+            cart = request.get_json()
+            # here we can check if the user is logged in and add the user_id to the cart
+            # if there is no user_id, then just create a new empty cart.
+            print("creating a new empty cart")
+            c = Cart()
+            # we need to add the new empty cart to the db so that it gets a unique id number
+            db.session.add(c)
+            db.session.commit()
+            # now we can just set the cookie with the id number
+            id = c.id
+            print("the id of the new cart is", id)
+            # add the book to the empty cart
+            new_item = CartItem(count=1, cart_id=id, book_isbn=book_isbn)
+            print("creating a new cart item to store the book\n", new_item)
+            db.session.add(new_item)
+            db.session.commit()
+            response.set_cookie('cart_id', str(id))
+
+        return response
         # productId = int(request.args.get('isbn'))
-        with sqlite3.connect('site.db') as conn:
-            cur = conn.cursor()
-            cur.execute("SELECT id FROM user WHERE email = '" + session['email'] + "'")
-            userId = cur.fetchone()[0]
-            try:
-                cur.execute("INSERT INTO carts (userId, productId) VALUES (?, ?)", (userId, isbn))
-                conn.commit()
-                msg = "Added successfully"
-            except:
-                conn.rollback()
-                msg = "Error occured"
-        conn.close()
-        return redirect(url_for('home'))
+        # with sqlite3.connect('site.db') as conn:
+        #     cur = conn.cursor()
+        #     cur.execute("SELECT id FROM user WHERE email = '" + session['email'] + "'")
+        #     userId = cur.fetchone()[0]
+        #     db.session.add(productId)
+        #     db.session.commit()
+        #     try:
+        #         cur.execute("INSERT INTO carts (userId, productId) VALUES (?, ?)", (userId, isbn))
+        #         conn.commit()
+        #         msg = "Added successfully"
+        #     except:
+        #         conn.rollback()
+        #         msg = "Error occured"
+        # conn.close()
+        # return redirect(url_for('home'))
 
 
 @app.route("/cart")
