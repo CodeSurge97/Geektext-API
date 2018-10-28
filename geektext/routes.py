@@ -2,8 +2,8 @@ import io
 from flask import Flask, flash, request, redirect, render_template, make_response, jsonify, url_for, send_file
 from geektext import app, db, bcrypt
 from geektext.models import *
-from geektext.forms import RegistrationForm, LoginForm, EditUserProfileForm
-from geektext.models import User
+from geektext.forms import RegistrationForm, LoginForm, EditUserProfileForm, BillingForm
+from geektext.models import User, CreditCard
 from flask_login import login_user, current_user, logout_user, login_required
 
 @app.route('/book/<int:isbn>')
@@ -11,7 +11,7 @@ def book_page(isbn):
     b = Book.query.filter_by(isbn=isbn)
     return render_template('book.html', book=b.first_or_404())
 
-@app.route('/home')
+@app.route('/')
 def home():
     books = Book.query.all()
     return render_template('index.html', books=books)
@@ -52,8 +52,18 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
-        return redirect('home')
+        return redirect('billing')
     return render_template('register.html', title='Register', form=form)
+
+@app.route("/billing", methods=['GET', 'POST'])
+def billing():
+    form = BillingForm()
+    if form.validate_on_submit():
+        Credit = CreditCard(card_type=form.card_type.data, cvv=form.cvv.data, card_number=form.card_number.data, exp_date=form.exp_date.data, user_id=current_user.user_id)
+        db.session.add(Credit)
+        db.session.commit()
+        return redirect('home')
+    return render_template('billing.html', form=form)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():

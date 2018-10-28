@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, SelectField, DateField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flask_login import current_user
 from geektext.models import User
@@ -50,5 +50,10 @@ class EditUserProfileForm(FlaskForm):
     home_address = StringField('Home Address', validators=[Length(max=100)])
     submit = SubmitField('Submit')
 
-
+class BillingForm(FlaskForm):
+    card_type = SelectField(u'Card Type', choices=['Visa', 'MasterCard', 'Discover', 'American Express'])
+    card_number = StringField('Card Number', validators=[Length(min=16, max=20)])
+    cvv = IntegerField('CVV')
+    exp_date = DateField('Expiration Date')
+    submit = SubmitField('Submit')
 
