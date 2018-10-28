@@ -2,8 +2,8 @@
 <html>
 <head>
 <title>Your Cart</title>
-<!--<link rel="stylesheet" href="{{url_for('static', filename='css/cart.css'}}" />-->
-<!--<link rel="stylesheet" href="{{url_for('static', filename='css/topStyle.css'}}" />-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
 <div id="title">
@@ -12,47 +12,33 @@
 		<input id="searchButton" type="submit" value="Search">
 	</form>
 
-	{% if not loggedIn %}
-		<div id="signInButton">
-			<a class="link" href="http://127.0.0.1:5000/login">Sign In</a>
-		</div>
-	{% else %}
 	<div class="dropdown">
 		<button class="dropbtn">Hello, <br>{{name}}</button>
 		<div class="dropdown-content">
-			<a href="/account/orders">Your orders</a>
-			<a href="/account/profile">Your profile</a>
-			<hr>
 			<a href="/logout">Sign Out</a>
 		</div>
 	</div>
-	{% endif %}
-	<div id="carts">
-		<a class="link" href="/cart">
-		<img src={{url_for('static', filename='images/shopping_cart.png'}} id="cartIcon" />
-		CART {{noOfItems}}
-		</a>
-	</div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <form action="/cart" method="post" novalidate>
+      {% for row in cart %}
+		<div class="row cart-row">
+            <div class="col-xs-12">
+                <div class="pull-left">
+                    <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>
+                </div>
+            </div>
+        </div>
+            {% endfor %}
+    </form>
+  </div>
 </div>
 <div id="cartItems">
 	<h2>Shopping Cart</h2>
 	<div id="tableItems">
-		{% for row in products %}
-		<div>
-			<hr id="separator1">
-			<div id="itemImage">
-				<img src="{{ url_for('static', filename='book.img'}" id="image"/>
-			</div>
-			<div id="itemName">
-				<span id="itemNameTag">{{row[1]}}</span><br>
-				In stock<br>
-				<a href="/removeFromCart?productId={{row[0]}}">Remove</a>
-			</div>
-			<div id="itemPrice">
-				${{row[2]}}
-			</div>
-		</div>
-		{% endfor %}
+
 		<hr id="separator2">
 		<div id="total">
 			<span id="subtotal">Subtotal</span> : ${{totalPrice}}

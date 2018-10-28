@@ -136,8 +136,9 @@ def login():
         user = User.query.filter_by(email=request.form['email']).first()
         if user is not None and bcrypt.check_password_hash(user.password, request.form['password']):
             session['logged_in'] = True
+           # session['email'] = user
             login_user(user)
-            flash('You were logged in')
+            print('You were logged in')
             return redirect(url_for('home'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
@@ -227,20 +228,20 @@ def addToCart(isbn):
 
 @app.route("/cart")
 def cart():
-    if 'email' not in session:
-        return redirect(url_for('login'))
-    loggedIn, firstName, noOfItems = getLoginDetails()
-    email = session['email']
-    with sqlite3.connect('site.db') as conn:
-        cur = conn.cursor()
-        cur.execute("SELECT id FROM user WHERE email = '" + email + "'")
-        userId = cur.fetchone()[0]
-        cur.execute("SELECT book.id, book.name, book.price, book.img FROM book, cart WHERE book.id = cart.productId AND cart.userId = " + str(userId))
-        products = cur.fetchall()
-    totalPrice = 0
-    for row in products:
-        totalPrice += row[2]
-    return render_template("cart.html", products=products, totalPrice=totalPrice, loggedIn=loggedIn, noOfItems=noOfItems)
+    # if 'email' not in session:
+    #     return redirect(url_for('login'))
+    # loggedIn, firstName, noOfItems = getLoginDetails()
+    # email = session['email']
+    # with sqlite3.connect('site.db') as conn:
+    #     cur = conn.cursor()
+    #     cur.execute("SELECT id FROM user WHERE email = '" + email + "'")
+    #     userId = cur.fetchone()[0]
+    #     cur.execute("SELECT book.id, book.name, book.price, book.img FROM book, cart WHERE book.id = cart.productId AND cart.userId = " + str(userId))
+    #     products = cur.fetchall()
+    # totalPrice = 0
+    # for row in products:
+    #     totalPrice += row[2]
+    return render_template("cart.html" )
 
 
 """
