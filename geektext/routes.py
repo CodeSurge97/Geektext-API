@@ -12,8 +12,6 @@ from datetime import date
 @app.route('/books')
 def home():
     books = Book.query.order_by(Book.title).all()
-    print("this is by publication date")
-    print(books)
     data = []
     for book in books:
         b = { 'title': book.title,
@@ -22,9 +20,18 @@ def home():
         'rating': book.rating,
         'price' : book.price,
         'img' : url_for('static', filename=book.img),
-        'author' : book.authors[0].name }
+        'author' : book.authors[0].name,
+        'description' : book.book_description, }
         data.append(b)
     response = make_response(jsonify(data))
+    if "loggedin" in request.cookies:
+        print(f"hello {request.cookies['loggedin']}")
+    else:
+        print("no cookies")
+    if "loggedin" in session:
+        print(f"hello {session['loggedin']}")
+    else:
+        print("no sessionxs")
     response.headers['Content-Type'] = 'application/json'
     response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
@@ -180,8 +187,6 @@ def browse_by_author():
 @app.route('/book/by-price-d')
 def browse_by_descending_price():
     books_by_price = Book.query.order_by(Book.price.desc())
-    print("this is by price")
-    print(books_by_price)
     data = []
     for book in books_by_price:
         b = { 'title': book.title,
@@ -202,8 +207,6 @@ def browse_by_descending_price():
 @app.route('/book/by-price-a')
 def browse_by_ascending_price():
     books_by_price = Book.query.order_by(Book.price)
-    print("this is by price")
-    print(books_by_price)
     data = []
     for book in books_by_price:
         b = { 'title': book.title,
@@ -224,8 +227,6 @@ def browse_by_ascending_price():
 @app.route ('/book/by-rating-d')
 def browse_by_descending_rating():
     books_by_rating = Book.query.order_by(Book.rating.desc())
-    print("this is by price")
-    print(books_by_rating)
     data = []
     for book in books_by_rating:
         b = { 'title': book.title,
@@ -247,7 +248,6 @@ def get_cart(id):
     response = make_response()
     if request.method == 'GET':
         if 'cart_id' in session:
-            print("there is a cookie in the request")
             cart_id = session["cart_id"]
             cart = Cart.query.get(cart_id)
             data = []
@@ -258,7 +258,6 @@ def get_cart(id):
                 }
                 data.append(c)
         else:
-            print("there is no session")
             cart_id = id
             cart = Cart.query.get(cart_id)
             data = []
@@ -269,7 +268,6 @@ def get_cart(id):
                 }
                 data.append(c)
         response = make_response(jsonify(data))
-        print(f"sending the itmes {data} to the ui")
         response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
     elif request.method == 'OPTIONS':
         response = make_response(jsonify(""))
@@ -345,8 +343,6 @@ def add_to_cart(user_id):
 @app.route ('/book/by-rating-a')
 def browse_by_ascending_rating():
     books_by_rating = Book.query.order_by(Book.rating)
-    print("this is by price")
-    print(books_by_rating)
     data = []
     for book in books_by_rating:
         b = { 'title': book.title,
@@ -391,38 +387,98 @@ def search_results(search):
  """
 
 
-#PROFILE MANAGEMENT:
+#PROFILE MANAGEMENT STUFF
 
-
-@app.route("/register", methods=['GET', 'POST'])
+@app.route("/register", methods=['GET', 'POST', 'OPTIONS'])
 def register():
     if current_user.is_authenticated:
        return redirect('home')
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(name=form.name.data, username=form.username.data, email=form.email.data, password=hashed_password)
+        user = User(name=form.name.data, username=form.username.data, email=form.email.data, password=hashed_password, address=form.home_address.data)
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
-        return redirect('login')
+        return redirect('billing')
     return render_template('register.html', title='Register', form=form)
 
-
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect('home')
-    form = LoginForm()
+@app.route("/billing", methods=['GET', 'POST'])
+def billing():
+    form = BillingForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
-            next_page = request.args.get('next')
-            return redirect('home')
+        Credit = CreditCard(card_type=form.card_type.data, cvv=form.cvv.data, card_number=form.card_number.data, exp_date=form.exp_date.data, user_id=current_user.user_id)
+        db.session.add(Credit)
+        db.session.commit()
+        return redirect('home')
+    return render_template('billing.html', form=form)
+
+@app.route("/login", methods=['GET', 'POST', 'OPTIONS'])
+def login():
+    if request.method == 'POST':
+        resp = {}
+        data = request.get_json()
+        email = data["email"]
+        password = data["password"]
+        print(f"the email and the password are: {email}, {password}")
+        if User.query.filter_by(email = email).first() is not None:
+            u = User.query.filter_by(email = email).first()
+            if u.password == password:
+                print("the user exist and the password is correct")
+                resp['error'] = "null"
+                resp['loggedin'] = "true"
+            else:
+                print("the user exist but the password is wrong")
+                resp['error'] = "wrong password"
+                resp['loggedin'] = "false"
         else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
-    return render_template('login.html', title='Login', form=form)
+            print("the user does not exist")
+            resp['error'] = "email doesn't exist"
+            resp['loggedin'] = "false"
+        print(f"at the end")
+        response = make_response((jsonify(resp), 201))
+        if(resp['loggedin'] == "true"):
+            print("setting the cookie")
+            response.set_cookie("loggedin", "true")
+            session['user'] = email
+        response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+        print(response.headers)
+    elif request.method == 'OPTIONS':
+        response = make_response(jsonify(""))
+        response.headers['Content-Type'] = 'application/json'
+        response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+        response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-PINGOTHER'
+    print(f"this is the response for the login {response.data}")
+    return response
+
+@app.route('/user/<username>', methods=['GET', 'POST'])
+def UserProfile(username):
+    user = User.query.filter_by(username=username).first()
+    return render_template('profile.html', user=user)
+
+@app.route("/Edit_Profile", methods=['GET', 'POST'])
+@login_required
+def EditProfile():
+    form = EditUserProfileForm()
+    if form.validate_on_submit():
+        current_user.name = form.name.data
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        current_user.password = hashed_password
+        current_user.address = form.home_address.data
+        #user = User(name=form.name.data, username=form.username.data, email=form.email.data, password=form.password.data, address=form.home_address.data)
+        db.session.add(current_user)
+        db.session.commit()
+        flash('Your profile has been updated.')
+        return redirect(url_for('UserProfile', username=current_user.username))
+    form.name.data = current_user.name
+    form.username.data = current_user.username
+    form.email.data = current_user.email
+    form.password.data = current_user.password
+    form.home_address.data = current_user.address
+    return render_template('edit_profile.html', form=form)
 
 
 @app.route("/logout")
@@ -430,26 +486,3 @@ def logout():
     logout_user()
     flash('Logout successful')
     return redirect('home')
-
-
-
-"""
-@app.route('/books/<isbn>')
-def book_page(book_title):
-
-    target = Book.query.filter(Book.title.like('%'+book_title+'%'))
-    return render_template('book.html', book=target.first())
-
-"""
-
-"""
-b = { 'title': book.title,
-'isbn': book.isbn,
-'date_pub' = book.date_pub,
-'genre': book.genre,
-'rating': book.rating,
-'price' : book.price,
-'img' : book.img,
-'pub_info' : book.pub_info,
-'book_description': book.book_description}
-"""
