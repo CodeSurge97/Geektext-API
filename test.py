@@ -118,7 +118,7 @@ def addFromJson():
     db.session.commit()
 
     #new cart
-    c = Cart()
+    c = Cart(user_id=user3.id)
     db.session.add(c)
     db.session.commit()
 
