@@ -44,8 +44,9 @@ def book_page(isbn):
             'rating' : comment.rating,
             'user_id' : comment.user_id,
             'date' : comment.creation_date,
-            'time' : str(comment.creation_time),
-            'username' : comment.user.username
+            'username' : comment.user.username,
+            'nickname' : comment.user.name,
+            'anon' : comment.anon
         }
         book_comments.append(c)
 
@@ -198,7 +199,7 @@ def add_comment(user_id):
     if request.method == 'POST':
         db.session.rollback()
         comment = request.get_json()
-        c = Comment(content=comment['content'], creation_date=date.today(), creation_time=datetime.now().time(), book_isbn=comment['isbn'], rating=comment['rating'], user_id=comment['user_id'])
+        c = Comment(content=comment['content'], creation_date=datetime.now().strftime("%Y-%m-%d %H:%M"), book_isbn=comment['isbn'], rating=comment['rating'], user_id=comment['user_id'], anon=comment['anon'])
         if user_exists(c.user_id):
             if book_purchased(user_id, int(c.book_isbn)):
                 if not rated_already(c.user_id, int(c.book_isbn)):
@@ -206,13 +207,8 @@ def add_comment(user_id):
                     db.session.add(c)
                 else:
                     db.session.execute(
-                        "UPDATE comment SET rating = :r, content = :c WHERE user_id = :ui AND book_isbn = :bi",
-                        {'r': c.rating, 'c': c.content, 'ui': c.user_id, 'bi': c.book_isbn})
-            else:
-                if not user_exists(c.user_id):
-                    flash("This user does not exist.")
-                if not book_exists(c.book_isbn):
-                    flash("The book was not found in the database.")
+                        "UPDATE comment SET rating = :r, content = :c, anon = :a WHERE user_id = :ui AND book_isbn = :bi",
+                        {'r': c.rating, 'c': c.content, 'a': c.anon, 'ui': c.user_id, 'bi': c.book_isbn})
         update_average_rating(c.book_isbn)
         update_numRatings(c.book_isbn)
         db.session.commit()

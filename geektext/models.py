@@ -103,11 +103,11 @@ class CreditCard(db.Model):
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text)
-    creation_date = db.Column(db.Date)
+    creation_date = db.Column(db.Text)
     rating = db.Column(db.Float)
-    creation_time = db.Column(db.Time)
     book_isbn = db.Column(db.BigInteger, db.ForeignKey('book.isbn'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    anon = db.Column(db.Integer)
 
     def __repr__(self):
         return f"Comment( commentID: '{self.id}', book: '{self.book_isbn}', userID: '{self.user_id}')"
