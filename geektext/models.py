@@ -85,7 +85,7 @@ class CreditCard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     card_type = db.Column(db.String(20))
     # I actually don't know if this cvv attribute shoult be a string or an Integer
-    card_number = db.Column(db.String(16), unique=True)
+    card_number = db.Column(db.String(20), unique=True)
     cvv = db.Column(db.Integer)
     exp_date = db.Column(db.Date)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -107,3 +107,21 @@ class Comment(db.Model):
 
     def __repr__(self):
         return f"Comment( commentID: '{self.id}', book: '{self.book_isbn}', userID: '{self.user_id}')"
+
+class CartItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    count = db.Column(db.Integer)
+    cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'))
+    book_isbn = db.Column(db.Integer, db.ForeignKey('book.isbn'))
+
+    def __repr__(self):
+        return f"CartItem( id: '{self.id}', cart_id: '{self.cart_id}', book_isbn: '{self.book_isbn}', count: '{self.count}')"
+
+class Cart(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    date = db.Column(db.Date)
+    cart_items = db.relationship('CartItem', backref=db.backref('cart'), lazy=True)
+
+    def __repr__(self):
+        return f"ShoppingCart( cart_id: '{self.id}', user_id: '{self.user_id}')"

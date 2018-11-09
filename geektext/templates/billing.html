@@ -41,16 +41,8 @@
                 </div>
                 <div class="form-group">
                     {{ form.exp_date.label(class="form-control-label") }}
-                    {% if form.exp_date.errors %}
-                        {{ form.exp_date(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.exp_date.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.exp_date(class="form-control form-control-lg") }}
-                    {% endif %}
+                    <input type="month" id="exp_date" name="card"
+                            min="2018-01" value="2018-11" />
                 </div>
             </fieldset>
             <div class="form-group">

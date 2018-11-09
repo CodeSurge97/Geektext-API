@@ -51,7 +51,7 @@ class EditUserProfileForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class BillingForm(FlaskForm):
-    card_type = SelectField(u'Card Type', choices=['Visa', 'MasterCard', 'Discover', 'American Express'])
+    card_type = SelectField('Card Type', choices=['Visa', 'MasterCard', 'Discover', 'American Express'])
     card_number = StringField('Card Number', validators=[Length(min=16, max=20)])
     cvv = IntegerField('CVV')
     exp_date = DateField('Expiration Date')
