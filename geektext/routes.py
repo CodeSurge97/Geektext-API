@@ -23,9 +23,10 @@ def create_response_json(request, json=""):
     response.headers['Content-Type'] = 'application/json'
     response.headers['Access-Control-Allow-Credentials'] = "true"
     try:
-        response.headers['Access-Control-Allow-Origin'] = request.headers['Origin']
+        response.headers['Access-Control-Allow-Origin'] = 'http://geek.localhost.com:3000'
     except:
         print("we have an error with heading 'Access-Control-Allow-Origin'")
+        response.headers['Access-Control-Allow-Origin'] = request.headers['Origin']
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
     return response
 
@@ -66,11 +67,11 @@ def print_response(response):
     print(100*"-")
     print("\n\n")
 
-@app.route('/books')
-def home():
-    books = Book.query.order_by(Book.title).all()
+@app.route('/books/<int:page>/<int:per_page>')
+def home(page, per_page):
+    books = Book.query.order_by(Book.title).paginate(page=page, per_page=per_page)
     data = []
-    for book in books:
+    for book in books.items:
         b = { 'title': book.title,
         'isbn': book.isbn,
         'genre': book.genre,
@@ -80,7 +81,8 @@ def home():
         'author' : book.authors[0].name,
         'description' : book.book_description, }
         data.append(b)
-    response = create_response_json(request=request, json=jsonify(data))
+    json_res = { 'books': data, 'totalNum': books.total}
+    response = create_response_json(request=request, json=jsonify(json_res))
     response.set_cookie("sortBy", "title")
     return response
 
@@ -227,7 +229,8 @@ def browse_by_author():
             'rating': book.rating,
             'price' : book.price,
             'img' : url_for('static', filename=book.img),
-            'author' : book.authors[0].name }
+            'author' : book.authors[0].name,
+            'description' : book.book_description, }
             data.append(b)
     response = create_response_json(request=request, json=jsonify(data))
     response.set_cookie("sortBy", "author")
@@ -244,7 +247,8 @@ def browse_by_descending_price():
         'rating': book.rating,
         'price' : book.price,
         'img' : url_for('static', filename=book.img),
-        'author' : book.authors[0].name }
+        'author' : book.authors[0].name,
+        'description' : book.book_description, }
         data.append(b)
     response = create_response_json(request=request, json=jsonify(data))
     response.set_cookie("sortBy", "priceD")
@@ -261,7 +265,9 @@ def browse_by_ascending_price():
         'rating': book.rating,
         'price' : book.price,
         'img' : url_for('static', filename=book.img),
-        'author' : book.authors[0].name }
+        'author' : book.authors[0].name,
+        'description' : book.book_description,
+        }
         data.append(b)
     response = create_response_json(request=request, json=jsonify(data))
     response.set_cookie("sortBy", "priceA")
@@ -278,7 +284,9 @@ def browse_by_descending_rating():
         'rating': book.rating,
         'price' : book.price,
         'img' : url_for('static', filename=book.img),
-        'author' : book.authors[0].name }
+        'author' : book.authors[0].name,
+        'description' : book.book_description,
+        }
         data.append(b)
     response = create_response_json(request=request, json=jsonify(data))
     response.set_cookie("sortBy", "ratingD")
@@ -295,7 +303,9 @@ def browse_by_ascending_rating():
         'rating': book.rating,
         'price' : book.price,
         'img' : url_for('static', filename=book.img),
-        'author' : book.authors[0].name }
+        'author' : book.authors[0].name,
+        'description' : book.book_description,
+            }
         data.append(b)
     response = create_response_json(request=request, json=jsonify(data))
     response.set_cookie("sortBy", "ratingD")
@@ -399,31 +409,26 @@ def add_to_cart(user_id):
     return response
 
 
-"""
-FIXME
-@app.route('/home', methods=['GET', 'POST'])
-def search_bar():
-    search = SearchForm(request.form)
-    if request.method == 'POST':
-        return search_results(search)
-    return render_template('base.html', form=search)
-
-@app.route('/results')
-def search_results(search):
-    results = []
-    search_string = search.data['search']
-
-    if search.data['search'] == '':
-        query = db_session.query(Author)
-        results = query.all()
-
-    if not results:
-        flash('No results found!')
-        return redirect('/')
-    else:
-        # display results
-        return render_template('results.html', results=results)
- """
+#Fixing the search function
+@app.route('/book/<book>', methods=['GET', 'POST'])
+def search(book):
+    print(book)
+    query = '%' + book + '%'
+    search = Book.query.filter(Book.title.ilike(query))
+    books = []
+    for book in search:
+        b = { 'title': book.title,
+        'isbn': book.isbn,
+        'genre': book.genre,
+        'rating': book.rating,
+        'price' : book.price,
+        'img' : url_for('static', filename=book.img),
+        'author' : book.authors[0].name,
+        'description' : book.book_description, }
+        books.append(b)
+    json_res = { 'books': books, 'totalNum': search.count()}
+    response = create_response_json(request=request, json=jsonify(json_res))
+    return response
 
 ###
 ##PROFILE MANAGEMENT STUFF

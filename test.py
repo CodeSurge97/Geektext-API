@@ -8,6 +8,7 @@ data = open("books.json", "r")
 books = json.load(data)
 data.close()
 
+
 def create():
     db.session.rollback()
     db.drop_all()
@@ -15,13 +16,15 @@ def create():
     db.create_all()
     print("creating new tables")
 
+
 def get_random_date():
-    d = date(year=random.randint(1999,2018), day=random.randint(1,30), month=random.randint(1,12))
+    d = date(year=random.randint(1999, 2018), day=random.randint(1, 30), month=random.randint(1, 12))
     return d
+
 
 def addFromJson():
     db.session.rollback()
-    #Create some books and authors
+    # Create some books and authors
     for book in books:
         #Create a new book b published on date d and with a price of p
         d = get_random_date()
