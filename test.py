@@ -1,6 +1,6 @@
 import json
 from geektext.models import *
-from geektext import db
+from geektext import app, db, bcrypt
 from datetime import date
 import random
 
@@ -47,11 +47,11 @@ def addFromJson():
         print(f"adding book {b.title}")
 
     #Create some users
-    user1 = User(name='Tomas Ortega', username='tomsOrtega', email='torte007@fiu.edu', password='1234567', address='7 Pumpkin Hill St. Fresh Meadows, NY 11365')
-    user2 = User(name='Pavlina Richards', username='anserinepavlina', email='pavlina_donald@gmail.com', password='28974293', address='9607 Wentworth Drive Muskogee, OK 74403')
-    user3 = User(name="Jose O'Connor", username='ashystephen', email='stephenoconnor17@gmail.com', password='787324', address='6 SE. Cherry Hill Ave. Glendale, AZ 85302')
-    user4 = User(name='Justyne Henrietta', username='boldjustyne', email='crunchyjustyne@gmail.com', password='23948529', address='65 Fremont Lane Lady Lake, FL 32159')
-    user5 = User(name='Augustina Collins', username='augustinacollins60', email='almondyaugustina@gmail.com', password='564564', address='40 Bohemia Rd. Muskego, WI 53150')
+    user1 = User(name='Tomas Ortega', username='tomsOrtega', email='torte007@fiu.edu', password=bcrypt.generate_password_hash('1234567').decode('utf-8'), address='7 Pumpkin Hill St. Fresh Meadows, NY 11365')
+    user2 = User(name='Pavlina Richards', username='anserinepavlina', email='pavlina_donald@gmail.com', password=bcrypt.generate_password_hash('28974293').decode('utf-8'), address='9607 Wentworth Drive Muskogee, OK 74403')
+    user3 = User(name="Jose O'Connor", username='ashystephen', email='stephenoconnor17@gmail.com', password=bcrypt.generate_password_hash('787324').decode('utf-8'), address='6 SE. Cherry Hill Ave. Glendale, AZ 85302')
+    user4 = User(name='Justyne Henrietta', username='boldjustyne', email='crunchyjustyne@gmail.com', password=bcrypt.generate_password_hash('23948529').decode('utf-8'), address='65 Fremont Lane Lady Lake, FL 32159')
+    user5 = User(name='Augustina Collins', username='augustinacollins60', email='almondyaugustina@gmail.com', password=bcrypt.generate_password_hash('564564').decode('utf-8'), address='40 Bohemia Rd. Muskego, WI 53150')
     db.session.add(user1)
     print(f"adding user {user1.name}")
     db.session.add(user2)

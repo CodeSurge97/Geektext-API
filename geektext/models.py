@@ -84,12 +84,11 @@ class User(db.Model, UserMixin):
 
 
 class CreditCard(db.Model):
-
     id = db.Column(db.Integer, primary_key=True)
     card_type = db.Column(db.String(20))
     # I actually don't know if this cvv attribute shoult be a string or an Integer
+    card_number = db.Column(db.String(20), unique=True)
     cvv = db.Column(db.Integer)
-    card_number = db.Column(db.String(16), unique=True)
     exp_date = db.Column(db.Date)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
