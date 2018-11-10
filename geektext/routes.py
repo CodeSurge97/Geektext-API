@@ -500,9 +500,7 @@ def login():
             print(f"Books purchased: {booksPurchased}")
             response.set_cookie("loggedin", "true")
             response.set_cookie("user", data["email"])
-            #for i in range(len(booksPurchased)):
-                #response.set_cookie("book" + i, booksPurchased[i])
-            #response.set_cookie("books", booksPurchased)
+            #response.set_cookie("books", f"{booksPurchased}", domain='geek.localhost.com')
             email = request.cookies.get('user')
             print(f"User email is {email}")
             #print(f"Books {email} purchased are {books}")
