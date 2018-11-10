@@ -182,13 +182,18 @@ def book_purchased(user_id, book_isbn):
     return False
 
 
+def books_purchased(user_email):
+    user_id = User.query.with_entities(User.id).filter(User.email == user_email).scalar()
+    u = User.query.get(user_id)
+    booksPurchased = []
+    for orderByUser in range(len(u.orders)):
+        for bookInOrder in range(len(u.orders[orderByUser].books)):
+            booksPurchased.append(u.orders[orderByUser].books[bookInOrder].isbn)
+    return booksPurchased
+
+
 def rated_already(user_id, book_isbn):
     return db.session.query(db.func.count(Comment.user_id)).filter(Comment.user_id == user_id).filter(Comment.book_isbn == book_isbn).scalar() is not 0
-
-
-@app.route('/insert-rating')
-def open_ratings_page():
-    return render_template("ratings.html")
 
 
 @app.route('/<int:user_id>/<int:book_isbn>/delete', methods=['DELETE', 'GET'])
@@ -203,52 +208,29 @@ def delete_rating(user_id, book_isbn):
     return render_template("test.html", myBooks=myBooks, myRating=myRating)
 
 
-@app.route('/<int:book>/ratings')
-def get_ratings(book):
-    db.session.rollback()
-    return Comment.query.filter_by(book_isbn=book)
-
-
 @app.route('/comment', methods=['GET', 'POST', 'OPTIONS'])
 def add_comment():
     if request.method == 'POST':
         db.session.rollback()
-        comment = request.get_json()
-        user_email = request.cookies.get('email')
-        print(f"User Email is {user_email}")
-        user_id = User.query.with_entities(User.id).filter(User.email == user_email).scalar()
-        c = Comment(content=comment['content'], creation_date=datetime.now().strftime("%Y-%m-%d %H:%M"), book_isbn=comment['isbn'], rating=comment['rating'], user_id=user_id, anon=comment['anon'])
-        if not rated_already(c.user_id, int(c.book_isbn)):
-            print(c)
-            db.session.add(c)
-        else:
-            db.session.execute(
-                "UPDATE comment SET rating = :r, content = :c, anon = :a WHERE user_id = :ui AND book_isbn = :bi",
-                {'r': c.rating, 'c': c.content, 'a': c.anon, 'ui': c.user_id, 'bi': c.book_isbn})
-        update_average_rating(c.book_isbn)
-        update_numRatings(c.book_isbn)
+        if 'user' in request.cookies:
+            comment = request.get_json()
+            user_email = request.cookies.get('user')
+            print(f"User Email is {user_email}")
+            user_id = User.query.with_entities(User.id).filter(User.email == user_email).scalar()
+            c = Comment(content=comment['content'], creation_date=datetime.now().strftime("%Y-%m-%d %H:%M"), book_isbn=comment['isbn'], rating=comment['rating'], user_id=user_id, anon=comment['anon'])
+            if not rated_already(c.user_id, int(c.book_isbn)):
+                print(c)
+                db.session.add(c)
+            else:
+                db.session.execute(
+                    "UPDATE comment SET rating = :r, content = :c, anon = :a WHERE user_id = :ui AND book_isbn = :bi",
+                    {'r': c.rating, 'c': c.content, 'a': c.anon, 'ui': c.user_id, 'bi': c.book_isbn})
+            update_average_rating(c.book_isbn)
+            update_numRatings(c.book_isbn)
         db.session.commit()
         response = make_response(jsonify("hello"))
     elif request.method == 'OPTIONS':
-        print(40*"-")
-        print("this is the request 'path'")
-        print(request.path)
-        print(40*"-")
-        print("this is the request 'url'")
-        print(request.url)
-        print(40*"-")
-        print("this is the request 'data'")
-        print(request.data)
-        print(40*"-")
-        print("this is the request 'headers'")
-        print(request.headers)
-        print(40*"-")
-        response = make_response(jsonify(""))
-        response.headers['Content-Type'] = 'application/json'
-        response.headers['Access-Control-Allow-Origin'] = request.headers['Origin']
-        response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-PINGOTHER'
-        response.headers['Access-Control-Max-Age'] = '86400'
+        response = create_response_options(request=request)
     return response
 
 ###
@@ -257,11 +239,7 @@ def add_comment():
 
 
 #The route for /books already sorts them by title
-"""@app.route('/book/by-title')
-def browse_by_title():
-    by_title = Book.query.order_by(Book.title)
-    return render_template('by_title.html', title=by_title)
-"""
+
 
 @app.route('/book/by-author')
 def browse_by_author():
@@ -518,10 +496,16 @@ def login():
             resp['loggedin'] = "false"
         response = create_response_json(json=(jsonify(resp)), request=request)
         if(resp['loggedin'] == "true"):
+            booksPurchased = books_purchased(data["email"])
+            print(f"Books purchased: {booksPurchased}")
             response.set_cookie("loggedin", "true")
             response.set_cookie("user", data["email"])
-            email = request.cookies.get('email')
+            #for i in range(len(booksPurchased)):
+                #response.set_cookie("book" + i, booksPurchased[i])
+            #response.set_cookie("books", booksPurchased)
+            email = request.cookies.get('user')
             print(f"User email is {email}")
+            #print(f"Books {email} purchased are {books}")
     elif request.method == 'OPTIONS':
         response = create_response_options(request=request)
     return response

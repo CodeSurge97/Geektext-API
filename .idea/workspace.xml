@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="147b4584-431d-412d-a7e8-20762aaad115" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/geektext/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/geektext/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/geektext/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/geektext/routes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/geektext/site.db" beforeDir="false" afterPath="$PROJECT_DIR$/geektext/site.db" afterDir="false" />
     </list>
@@ -53,12 +55,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="557" />
+          <entry key="py" value="1399" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="557" />
+          <entry key="Python" value="1399" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -78,8 +80,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/geektext/routes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="329">
-              <caret line="550" column="21" selection-start-line="550" selection-start-column="21" selection-end-line="550" selection-end-column="21" />
+            <state relative-caret-position="210">
+              <caret line="331" column="3" lean-forward="true" selection-start-line="331" selection-start-column="3" selection-end-line="331" selection-end-column="3" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -114,8 +116,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/geektext/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-380">
-              <caret line="73" column="12" lean-forward="true" selection-start-line="73" selection-start-column="12" selection-end-line="73" selection-end-column="66" />
+            <state relative-caret-position="1887">
+              <caret line="112" column="121" selection-start-line="112" selection-start-column="121" selection-end-line="112" selection-end-column="121" />
             </state>
           </provider>
         </entry>
@@ -141,7 +143,13 @@
       <find>cookies</find>
       <find>cookie</find>
       <find>add</find>
+      <find>set_cook</find>
+      <find>request.cookies.get</find>
       <find>add_comment</find>
+      <find>is {</find>
+      <find>== 'po</find>
+      <find>create_response_option</find>
+      <find>set_cookie</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -244,17 +252,37 @@
     <entry file="file://$PROJECT_DIR$/geektext/site.db">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/geektext/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="22" column="27" selection-start-line="22" selection-start-column="27" selection-end-line="22" selection-end-column="27" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/geektext/forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="12" column="32" lean-forward="true" selection-start-line="12" selection-start-column="32" selection-end-line="12" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/geektext/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-380">
-          <caret line="73" column="12" lean-forward="true" selection-start-line="73" selection-start-column="12" selection-end-line="73" selection-end-column="66" />
+        <state relative-caret-position="1887">
+          <caret line="112" column="121" selection-start-line="112" selection-start-column="121" selection-end-line="112" selection-end-column="121" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/geektext/routes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="329">
-          <caret line="550" column="21" selection-start-line="550" selection-start-column="21" selection-end-line="550" selection-end-column="21" />
+        <state relative-caret-position="210">
+          <caret line="331" column="3" lean-forward="true" selection-start-line="331" selection-start-column="3" selection-end-line="331" selection-end-column="3" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>

@@ -87,7 +87,7 @@ class CreditCard(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     card_type = db.Column(db.String(20))
-    # I actually don't know if this cvv attribute shoult be a string or an Integer
+    # I actually don't know if this cvv attribute should be a string or an Integer
     cvv = db.Column(db.Integer)
     card_number = db.Column(db.String(16), unique=True)
     exp_date = db.Column(db.Date)
@@ -110,7 +110,7 @@ class Comment(db.Model):
     anon = db.Column(db.Integer)
 
     def __repr__(self):
-        return f"Comment( commentID: '{self.id}', book: '{self.book_isbn}', userID: '{self.user_id}')"
+        return f"Comment( commentID: '{self.id}', book: '{self.book_isbn}', userID: '{self.user_id}', anon: '{self.anon}')"
 
 
 class CartItem(db.Model):
