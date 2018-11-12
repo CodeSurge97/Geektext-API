@@ -225,6 +225,9 @@ def delete_rating(user_id, book_isbn):
 def add_comment():
     if request.method == 'POST':
         db.session.rollback()
+        response = create_response_json(request=request)
+        print_request(request)
+        print_response(response)
         if 'user' in request.cookies:
             comment = request.get_json()
             print(comment)
@@ -243,9 +246,10 @@ def add_comment():
             update_average_rating(c.book_isbn)
             update_numRatings(c.book_isbn)
         db.session.commit()
-        response = make_response(jsonify("hello"))
     elif request.method == 'OPTIONS':
         response = create_response_options(request=request)
+        print_request(request)
+        print_response(response)
     return response
 
 ###
