@@ -10,6 +10,6 @@
 
 ```$ python3 run.py```
 
-#### Cleaning up cached and other garbage files:
+#### Cleaning up cached and other garbage files (RUN THIS BEFORE EVERY PUSH):
 
 ```$ find . | grep -E "(__pycache__|\.pyc|\.pyo$|\.orig)" | xargs rm -rf```
