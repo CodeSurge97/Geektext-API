@@ -110,7 +110,7 @@ class Comment(db.Model):
     anon = db.Column(db.Integer)
 
     def __repr__(self):
-        return f"Comment( commentID: '{self.id}', book: '{self.book_isbn}', userID: '{self.user_id}', anon: '{self.anon}')"
+        return f"Comment( commentID: '{self.id}', content: '{self.content}', book: '{self.book_isbn}', userID: '{self.user_id}', anon: '{self.anon}')"
 
 
 class CartItem(db.Model):

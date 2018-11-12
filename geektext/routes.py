@@ -94,18 +94,25 @@ def home():
 @app.route('/book/<int:isbn>')
 def book_page(isbn):
     book = Book.query.filter_by(isbn=isbn).first()
+    if 'user' in request.cookies:
+        user_email = request.cookies.get('user')
+        print(f"User Email is {user_email}")
+        user_id = User.query.with_entities(User.id).filter(User.email == user_email).scalar()
+        print(f"User id: {user_id}")
+        has_book = has_book_update(user_id, int(isbn))
+        print(f"Has book? {has_book}")
     #we need to create a dictionary or something for each comment and put it in a list and then put that in the comments of the book or something
     book_comments = []
     for comment in book.comments:
         c = {
             'id' : comment.id,
-            'contents' : comment.content,
+            'content' : comment.content,
             'rating' : comment.rating,
             'user_id' : comment.user_id,
             'date' : comment.creation_date,
             'username' : comment.user.username,
             'nickname' : comment.user.name,
-            'anon' : comment.anon
+            'anon' : comment.anon,
         }
         book_comments.append(c)
     b = {
@@ -122,7 +129,8 @@ def book_page(isbn):
         'description' : book.book_description,
         'comments' : book_comments,
         'pub_info' : book.pub_info,
-        'date_pub' : book.date_pub
+        'date_pub' : book.date_pub,
+        'hasBook' : has_book
         }
     response = create_response_json(request=request, json=jsonify(b))
     return response
@@ -162,6 +170,11 @@ def author_page(id):
 ## Rate and comments
 ###
 
+
+def has_book_update(user_id, book_isbn):
+    if book_purchased(user_id, int(book_isbn)):
+        return "true"
+    return "false"
 
 def update_average_rating(book_isbn):
     averageRating = db.session.query(db.func.avg(Comment.rating)).filter(Comment.book_isbn == book_isbn).scalar()
@@ -208,15 +221,17 @@ def delete_rating(user_id, book_isbn):
     return render_template("test.html", myBooks=myBooks, myRating=myRating)
 
 
-@app.route('/comment', methods=['GET', 'POST', 'OPTIONS'])
+@app.route('/comment', methods=['POST', 'OPTIONS'])
 def add_comment():
     if request.method == 'POST':
         db.session.rollback()
         if 'user' in request.cookies:
             comment = request.get_json()
+            print(comment)
             user_email = request.cookies.get('user')
             print(f"User Email is {user_email}")
             user_id = User.query.with_entities(User.id).filter(User.email == user_email).scalar()
+            print(f"User ID is {user_id}")
             c = Comment(content=comment['content'], creation_date=datetime.now().strftime("%Y-%m-%d %H:%M"), book_isbn=comment['isbn'], rating=comment['rating'], user_id=user_id, anon=comment['anon'])
             if not rated_already(c.user_id, int(c.book_isbn)):
                 print(c)
