@@ -353,19 +353,21 @@ def browse_by_ascending_rating(page, per_page):
 @app.route("/get-cart")
 def get_cart():
     data = []
+    user_name = ""
     if 'user' in request.cookies:
         user_email = request.cookies.get('user')
         user = User.query.filter_by(email=user_email).first()
         if user is not None and user.cart is not []:
+            user_name = user.name
             for item in user.cart[0].cart_items:
                 book = Book.query.get(item.book_isbn)
                 c = {
                     'count': item.count,
-                    'book': book.title
+                    'book': book.title,
                 }
                 data.append(c)
-    response = create_response_json(json=jsonify(data), request=request)
-    response.headers['Access-Control-Allow-Origin'] = 'http://geek.localhost.com:3000'
+    json_data = {"items": data, "user_name": user_name}
+    response = create_response_json(json=jsonify(json_data), request=request)
     return response
 
 
