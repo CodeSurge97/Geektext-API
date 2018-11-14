@@ -1,10 +1,8 @@
 
 import io
-from flask import Flask, flash, request, redirect, render_template, make_response, jsonify, url_for, send_file, session
+from flask import Flask, flash, request, redirect, make_response, jsonify, url_for, send_file, session
 from geektext import app, db, bcrypt
 from geektext.models import *
-from geektext.forms import RegistrationForm, BillingForm, LoginForm#, SearchForm, 
-from geektext.models import User
 from flask_login import login_user, current_user, logout_user, login_required
 import json
 from datetime import date
@@ -438,12 +436,7 @@ def search_results(search):
 
 @app.route("/register", methods=['GET', 'POST', 'OPTIONS'])
 def register():
-    if 'loggedin' in request.cookies:
-        resp = {}
-        resp['error'] = 'user already loggedin'
-        resp['registered'] = 'true'
-        response = make_response(jsonify(resp))
-    elif request.method == 'POST':
+    if request.method == 'POST':
         resp ={}
         data = request.get_json()
         hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
@@ -473,12 +466,9 @@ def billing():
     if request.method == 'POST':
         resp = {}
         data = request.get_json()
-        card_type = data["card_type"]
-        card_number = data["card_number"]
-        cvv = data["cvv"]
-        exp_date = data["exp_date"]
-        if CreditCard.query.filter_by(card_number=card_number).first() is None:
-            credit = CreditCard(card_type=card_type, cvv=cvv, card_number=card_number, exp_date=exp_date) #user_id=current_user.user_id
+        user = User.query.filter_by(username=data['username']).first()
+        if CreditCard.query.filter_by(card_number=data['card_number']).first() is None:
+            credit = CreditCard(card_type=data["card_type"], cvv=data["cvv"], card_number=data["card_number"], exp_date=data["exp_date"], user_id=user.id)
             db.session.add(credit)
             db.session.commit()
             resp['error'] = "null"
@@ -488,29 +478,20 @@ def billing():
            resp['error'] = " card already exists"
            resp['validated'] = "false"
         print(f"at the end")
-        response = make_response((jsonify(resp), 201))
+        response = create_response_json(json=(jsonify(resp)), request=request)
         if(resp['validated'] == "true"):
             print("setting the cookie")
             response.set_cookie("validated", "true")
-            #session['user'] = email
         response.headers['Access-Control-Allow-Origin'] = 'http://dev.geektext.com:3000'
         print(response.headers)
     elif request.method == 'OPTIONS':
-        response = make_response(jsonify(""))
-        response.headers['Content-Type'] = 'application/json'
-        response.headers['Access-Control-Allow-Origin'] = 'http://dev.geektext.com:3000'
-        response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-PINGOTHER'
+        response = create_response_options(request=request)
     return response
 
 @app.route("/login", methods=['GET', 'POST', 'OPTIONS'])
 def login():
-    if 'loggedin' in request.cookies:
-       resp = {}
-       resp['error'] = "user is already loggedin"
-       resp['loggedin'] = 'true'
-       response = make_response(jsonify(resp), 201)
-    elif request.method == 'POST':
+    if request.method == 'POST':
+        resp = {}
         data = request.get_json()
         user = User.query.filter_by(email = data["email"]).first()
         if user is not None:
@@ -534,6 +515,7 @@ def login():
 @app.route('/user/<username>')
 def UserProfile(username):
     #if 'loggedin' in session:
+    #response.get_cookie('user')
     user = User.query.filter_by(username=username).first()
     u = {
     'name': user.name,
@@ -545,35 +527,63 @@ def UserProfile(username):
     return response
 
 
-@app.route("/Edit_Profile", methods=['GET', 'POST'])
-@login_required
+@app.route("/Edit_Profile", methods=['GET', 'POST', 'OPTIONS'])
 def EditProfile():
-    form = EditUserProfileForm()
-    if form.validate_on_submit():
-        current_user.name = form.name.data
-        current_user.username = form.username.data
-        current_user.email = form.email.data
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        current_user.password = hashed_password
-        current_user.address = form.home_address.data
-        #user = User(name=form.name.data, username=form.username.data, email=form.email.data, password=form.password.data, address=form.home_address.data)
-        db.session.add(current_user)
-        db.session.commit()
-        flash('Your profile has been updated.')
-        return redirect(url_for('UserProfile', username=current_user.username))
-    form.name.data = current_user.name
-    form.username.data = current_user.username
-    form.email.data = current_user.email
-    form.password.data = current_user.password
-    form.home_address.data = current_user.address
-    return render_template('edit_profile.html', form=form)
+    if request.method == 'POST':
+        resp = {}
+        data = request.get_json()
+        hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+        #print(f"the email and the password are: {email}, {hashed_password}")
+        user = User.query.filter_by(username = data['old_username'] ).first()
+        if user.username == data['new_username']:
+            user.name = data['name']
+            user.email = data['email']
+            user.password = hashed_password
+            user.address = data['address']
+            db_session.add(user)
+            db_session.commit()
+            resp['error'] = "null"
+            resp['updated'] = "true"
+        if user.email == data['email']:
+            user.name = data['name']
+            user.username = data['new_username']
+            user.password = hashed_password
+            user.address = data['address']
+            db.session.add(user)
+            db.session.commit()
+            resp['error'] = "null"
+            resp['updated'] = "true"
+
+        elif User.query.filter_by(email = data['email']).first() is None:
+            if User.query.filter_by(username = data['new_username'] ).first() is None:
+                user.name = data['name']
+                user.username = data['new_username']
+                user.email = data['email']
+                user.password = hashed_password
+                user.address = data['address']
+                db.session.add(user)
+                db.session.commit()
+                resp['error'] = "null"
+                resp['updated'] = "true"
+        else:
+           print("the email and/or username already exists ")
+           resp['error'] = "user already exists"
+           resp['updated'] = "false"
+        print(f"at the end")
+        response = create_response_json(json=(jsonify(resp)), request=request)
+        if(resp['updated'] == "true"):
+            response.set_cookie("loggedin", "true")
+            response.set_cookie("user", data["new_username"])
+    elif request.method == 'OPTIONS':
+        response = create_response_options(request=request)
+    return response
 
 
 @app.route("/logout")
 def logout():
     if 'loggedin' in session:
         resp['error'] = 'null'
-        res['loggedin'] = 'false'
+        resp['loggedin'] = 'false'
         response = make_response((jsonify(resp), 201))
        
     return response
