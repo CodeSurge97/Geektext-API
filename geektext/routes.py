@@ -195,30 +195,8 @@ def book_purchased(user_id, book_isbn):
     return False
 
 
-def books_purchased(user_email):
-    user_id = User.query.with_entities(User.id).filter(User.email == user_email).scalar()
-    u = User.query.get(user_id)
-    booksPurchased = []
-    for orderByUser in range(len(u.orders)):
-        for bookInOrder in range(len(u.orders[orderByUser].books)):
-            booksPurchased.append(u.orders[orderByUser].books[bookInOrder].isbn)
-    return booksPurchased
-
-
 def rated_already(user_id, book_isbn):
     return db.session.query(db.func.count(Comment.user_id)).filter(Comment.user_id == user_id).filter(Comment.book_isbn == book_isbn).scalar() is not 0
-
-
-@app.route('/<int:user_id>/<int:book_isbn>/delete', methods=['DELETE', 'GET'])
-def delete_rating(user_id, book_isbn):
-    db.session.rollback()
-    db.session.execute("DELETE FROM comment WHERE user_id = :uid AND book_isbn= :isbn", {'uid' : user_id, 'isbn' : book_isbn})
-    update_average_rating(book_isbn)
-    update_numRatings(book_isbn)
-    db.session.commit()
-    myBooks = Book.query.all()
-    myRating = Comment.query.all()
-    return render_template("test.html", myBooks=myBooks, myRating=myRating)
 
 
 @app.route('/comment', methods=['POST', 'OPTIONS'])
@@ -514,14 +492,10 @@ def login():
             resp['loggedin'] = "false"
         response = create_response_json(json=(jsonify(resp)), request=request)
         if(resp['loggedin'] == "true"):
-            booksPurchased = books_purchased(data["email"])
-            print(f"Books purchased: {booksPurchased}")
             response.set_cookie("loggedin", "true")
             response.set_cookie("user", data["email"])
-            #response.set_cookie("books", f"{booksPurchased}", domain='geek.localhost.com')
             email = request.cookies.get('user')
             print(f"User email is {email}")
-            #print(f"Books {email} purchased are {books}")
     elif request.method == 'OPTIONS':
         response = create_response_options(request=request)
     return response
