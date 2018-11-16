@@ -28,7 +28,7 @@ def addFromJson():
         p = float(book["price"])
         b = Book(isbn=book["isbn"], genre=book["genre"], title=book["title"], img=book["img"], date_pub=d, price=p, book_description=book["description"], pub_info=book["publishing_info"], rating=book["rating"])
         #Create a new author a
-        a = Author(name=book["author"], info=book['author_info'])
+        a = Author(name=book["author"], info=book['author_info'], img=book['author_pic'])
         #Declare that author a wrote the book b
         a.books.append(b)
         db.session.add(b)
@@ -72,6 +72,9 @@ def addFromJson():
     db.session.add(order3)
 
     db.session.commit()
+
+    #now we can add some credit credit cards
+
 
     #now we can add some credit credit cards
 

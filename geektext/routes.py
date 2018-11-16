@@ -6,8 +6,7 @@ from geektext.forms import RegistrationForm, LoginForm
 from geektext.models import User
 from flask_login import login_user, current_user, logout_user, login_required
 import json
-from datetime import date
-
+from datetime import datetime
 
 def create_response_options(request):
     response = make_response(jsonify(""))
@@ -97,16 +96,25 @@ def home(page, per_page):
 @app.route('/book/<int:isbn>')
 def book_page(isbn):
     book = Book.query.filter_by(isbn=isbn).first()
-    # we need to create a dictionary or something for each comment and put it in a list and then put that in the comments of the book or something
+    if 'user' in request.cookies:
+        user_email = request.cookies.get('user')
+        print(f"User Email is {user_email}")
+        user_id = User.query.with_entities(User.id).filter(User.email == user_email).scalar()
+        print(f"User id: {user_id}")
+        has_book = has_book_update(user_id, int(isbn))
+        print(f"Has book? {has_book}")
+    #we need to create a dictionary or something for each comment and put it in a list and then put that in the comments of the book or something
     book_comments = []
     for comment in book.comments:
         c = {
-            'id': comment.id,
-            'contents': comment.content,
-            'rating': comment.rating,
-            'user_id': comment.user_id,
-            'date': comment.creation_date,
-            'username': comment.user.username
+            'id' : comment.id,
+            'content' : comment.content,
+            'rating' : comment.rating,
+            'user_id' : comment.user_id,
+            'date' : comment.creation_date,
+            'username' : comment.user.username,
+            'nickname' : comment.user.name,
+            'anon' : comment.anon,
         }
         book_comments.append(c)
     b = {
@@ -114,19 +122,20 @@ def book_page(isbn):
         'isbn': book.isbn,
         'genre': book.genre,
         'rating': book.rating,
-        'price': book.price,
-        'img': url_for('static', filename=book.img),
-        'author': book.authors[0].name,
-        'author_id': book.authors[0].id,
+        'numRatings': book.numRatings,
+        'price' : book.price,
+        'img' : url_for('static', filename=book.img),
+        'author' : book.authors[0].name,
+        'author_id' : book.authors[0].id,
         'author_info': book.authors[0].info,
-        'description': book.book_description,
-        'comments': book_comments,
-        'pub_info': book.pub_info,
-        'date_pub': book.date_pub
-    }
+        'description' : book.book_description,
+        'comments' : book_comments,
+        'publisher' : book.pub_info,
+        'date_pub' : book.date_pub.strftime("%Y-%m-%d"),
+        'hasBook' : has_book
+        }
     response = create_response_json(request=request, json=jsonify(b))
     return response
-
 
 @app.route('/author/<int:id>')
 def author_page(id):
@@ -155,6 +164,7 @@ def author_page(id):
         'books': books,
         'author_pic': author.img,
     }
+    print(author.img)
     response = create_response_json(request=request, json=jsonify(a))
     return response
 
@@ -164,26 +174,19 @@ def author_page(id):
 ###
 
 
+def has_book_update(user_id, book_isbn):
+    if book_purchased(user_id, int(book_isbn)):
+        return "true"
+    return "false"
+
 def update_average_rating(book_isbn):
-    averageRating = db.session.query(db.func.avg(Comment.rating)).filter(
-        Comment.book_isbn == book_isbn).scalar()
-    db.session.execute("UPDATE book SET rating = :ar WHERE isbn = :bi", {
-                       'ar': averageRating, 'bi': book_isbn})
+    averageRating = db.session.query(db.func.avg(Comment.rating)).filter(Comment.book_isbn == book_isbn).scalar()
+    db.session.execute("UPDATE book SET rating = :ar WHERE isbn = :bi", {'ar' : averageRating, 'bi' : book_isbn})
 
 
 def update_numRatings(book_isbn):
-    numRatings = db.session.query(db.func.count(Comment.rating)).filter(
-        Comment.book_isbn == book_isbn).scalar()
-    db.session.execute("UPDATE book SET numRatings = :nr WHERE isbn = :bi", {
-                       'nr': numRatings, 'bi': book_isbn})
-
-
-def book_exists(book_isbn):
-    return Book.query.get(book_isbn) is not None
-
-
-def user_exists(user_id):
-    return User.query.get(user_id) is not None
+    numRatings = db.session.query(db.func.count(Comment.rating)).filter(Comment.book_isbn == book_isbn).scalar()
+    db.session.execute("UPDATE book SET numRatings = :nr WHERE isbn = :bi", {'nr' : numRatings, 'bi' : book_isbn})
 
 
 def book_purchased(user_id, book_isbn):
@@ -194,29 +197,39 @@ def book_purchased(user_id, book_isbn):
                 return True
     return False
 
-
 def rated_already(user_id, book_isbn):
     return db.session.query(db.func.count(Comment.user_id)).filter(Comment.user_id == user_id).filter(Comment.book_isbn == book_isbn).scalar() is not 0
 
 
-@app.route('/comment/<int:user_id>', methods=['GET', 'POST', 'OPTIONS'])
-def add_comment(user_id):
-    response = None
+@app.route('/comment', methods=['POST', 'OPTIONS'])
+def add_comment():
     if request.method == 'POST':
+        db.session.rollback()
         print_request(request)
-        user = User.query.get(user_id)
-        comment = request.get_json()
-        c = Comment(content=comment['content'], creation_date=date.today(
-        ), book_isbn=comment['isbn'], rating=comment['rating'], user_id=comment['user_id'])
-        print(c)
-        db.session.add(c)
+        if 'user' in request.cookies:
+            comment = request.get_json()
+            print(comment)
+            user_email = request.cookies.get('user')
+            print(f"User Email is {user_email}")
+            user_id = User.query.with_entities(User.id).filter(User.email == user_email).scalar()
+            print(f"User ID is {user_id}")
+            c = Comment(content=comment['content'], creation_date=datetime.now().strftime("%Y-%m-%d %H:%M"), book_isbn=comment['isbn'], rating=comment['rating'], user_id=user_id, anon=comment['anon'])
+            if not rated_already(c.user_id, int(c.book_isbn)):
+                print(c)
+                db.session.add(c)
+            else:
+                db.session.execute(
+                    "UPDATE comment SET rating = :r, content = :c, anon = :a WHERE user_id = :ui AND book_isbn = :bi",
+                    {'r': c.rating, 'c': c.content, 'a': c.anon, 'ui': c.user_id, 'bi': c.book_isbn})
+            update_average_rating(c.book_isbn)
+            update_numRatings(c.book_isbn)
         db.session.commit()
-        response = make_response(jsonify("hello"))
+        response = create_response_json(request=request)
     elif request.method == 'OPTIONS':
-        print_request(request)
         response = create_response_options(request=request)
+        print_request(request)
+        print_response(response)
     return response
-
 
 ###
 # BROWSING/SORTING:
@@ -343,6 +356,7 @@ def browse_by_ascending_rating(page, per_page):
     response = create_response_json(request=request, json=jsonify(json_res))
     response.set_cookie("sortBy", "ratingD")
     return response
+
 
 
 ###

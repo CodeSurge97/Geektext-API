@@ -43,6 +43,7 @@ class Book(db.Model):
     date_pub = db.Column(db.Date)
     genre = db.Column(db.String(100))
     rating = db.Column(db.Float)
+    numRatings = db.Column(db.BigInteger)
     price = db.Column(db.Float)
     img = db.Column(db.String(100))
     pub_info = db.Column(db.Text)
@@ -102,13 +103,14 @@ class CreditCard(db.Model):
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text)
-    creation_date = db.Column(db.Date)
+    creation_date = db.Column(db.Text)
     rating = db.Column(db.Float)
     book_isbn = db.Column(db.BigInteger, db.ForeignKey('book.isbn'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    anon = db.Column(db.Integer)
 
     def __repr__(self):
-        return f"Comment( commentID: '{self.id}', book: '{self.book_isbn}', userID: '{self.user_id}')"
+        return f"Comment( commentID: '{self.id}', rating: '{self.rating}', content: '{self.content}', book: '{self.book_isbn}', userID: '{self.user_id}', anon: '{self.anon}')"
 
 
 class CartItem(db.Model):
