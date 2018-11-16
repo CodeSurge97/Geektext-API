@@ -61,9 +61,8 @@ def addFromJson():
     user4.orders.append(order1)
     db.session.add(order1)
     order2 = Order(order_date=date.today())
-    order2.books.append(Book.query.filter_by(title="Cracking the Coding Interview: 189 Programming Questions and Solutions").first())
-    order2.books.append(Book.query.filter_by(title="Harry Potter and the Sorcerer's Stone").first())
-    order2.books.append(Book.query.filter_by(title="Crazy Rich Asians").first())
+    for book in Book.query.order_by(Book.title):
+        order2.books.append(book)
     user1.orders.append(order2)
     db.session.add(order2)
     order3 = Order(order_date=date.today())
