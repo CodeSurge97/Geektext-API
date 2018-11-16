@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="147b4584-431d-412d-a7e8-20762aaad115" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/geektext/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/geektext/routes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/geektext/site.db" beforeDir="false" afterPath="$PROJECT_DIR$/geektext/site.db" afterDir="false" />
     </list>
@@ -48,18 +47,19 @@
     <session id="1784951912">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
+          <entry key="project.open.time.29" value="1" />
           <entry key="project.open.time.3" value="1" />
-          <entry key="project.opened" value="1" />
+          <entry key="project.opened" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="3240" />
+          <entry key="py" value="3244" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="3240" />
+          <entry key="Python" value="3244" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -79,11 +79,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/geektext/routes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-88">
-              <caret line="102" column="38" lean-forward="true" selection-start-line="102" selection-start-column="38" selection-end-line="102" selection-end-column="38" />
+            <state relative-caret-position="227">
+              <caret line="216" column="36" lean-forward="true" selection-start-line="216" selection-start-column="36" selection-end-line="216" selection-end-column="36" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
-                <marker date="1542312942974" expanded="true" signature="5778:5780" ph="..." />
               </folding>
             </state>
           </provider>
@@ -92,7 +91,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/geektext/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
+            <state relative-caret-position="306">
               <caret line="22" column="27" selection-start-line="22" selection-start-column="27" selection-end-line="22" selection-end-column="27" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
@@ -104,7 +103,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/geektext/forms.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
+            <state relative-caret-position="136">
               <caret line="12" column="32" selection-start-line="12" selection-start-column="32" selection-end-line="12" selection-end-column="32" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
@@ -126,7 +125,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>is {</find>
       <find>== 'po</find>
       <find>create_response_option</find>
       <find>set_cookie</find>
@@ -156,6 +154,7 @@
       <find>date</find>
       <find>books_purchase</find>
       <find>login</find>
+      <find>strf</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\Nicky-poo\Desktop\api</dir>
@@ -281,29 +280,20 @@
     <entry file="file://$PROJECT_DIR$/geektext/site.db">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/geektext/bifurcation.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/geektext/models.py">
+    <entry file="file://$PROJECT_DIR$/geektext/bifurcation.py" />
+    <entry file="file://$PROJECT_DIR$/geektext/routes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1683">
-          <caret line="100" column="48" selection-start-line="100" selection-start-column="48" selection-end-line="100" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/geektext/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="32" selection-start-line="12" selection-start-column="32" selection-end-line="12" selection-end-column="32" />
+        <state relative-caret-position="227">
+          <caret line="216" column="36" lean-forward="true" selection-start-line="216" selection-start-column="36" selection-end-line="216" selection-end-column="36" />
           <folding>
-            <element signature="e#0#31#0" expanded="true" />
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/geektext/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
+        <state relative-caret-position="306">
           <caret line="22" column="27" selection-start-line="22" selection-start-column="27" selection-end-line="22" selection-end-column="27" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
@@ -311,14 +301,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/geektext/routes.py">
+    <entry file="file://$PROJECT_DIR$/geektext/forms.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-88">
-          <caret line="102" column="38" lean-forward="true" selection-start-line="102" selection-start-column="38" selection-end-line="102" selection-end-column="38" />
+        <state relative-caret-position="136">
+          <caret line="12" column="32" selection-start-line="12" selection-start-column="32" selection-end-line="12" selection-end-column="32" />
           <folding>
-            <element signature="e#0#9#0" expanded="true" />
-            <marker date="1542312942974" expanded="true" signature="5778:5780" ph="..." />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/geektext/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1683">
+          <caret line="100" column="48" selection-start-line="100" selection-start-column="48" selection-end-line="100" selection-end-column="48" />
         </state>
       </provider>
     </entry>
