@@ -211,7 +211,7 @@ def add_comment():
             print(f"User Email is {user_email}")
             user_id = User.query.with_entities(User.id).filter(User.email == user_email).scalar()
             print(f"User ID is {user_id}")
-            c = Comment(content=comment['content'], creation_date=datetime.now().strftime("%Y-%m-%d %H:%M"), book_isbn=comment['isbn'], rating=comment['rating'], user_id=user_id, anon=comment['anon'])
+            c = Comment(content=comment['content'], creation_date=datetime.now().strftime("%Y-%m-%d %I:%M %p"), book_isbn=comment['isbn'], rating=comment['rating'], user_id=user_id, anon=comment['anon'])
             if not rated_already(c.user_id, int(c.book_isbn)):
                 print(c)
                 db.session.add(c)
