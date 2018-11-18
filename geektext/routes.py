@@ -96,6 +96,9 @@ def home(page, per_page):
 @app.route('/book/<int:isbn>')
 def book_page(isbn):
     book = Book.query.filter_by(isbn=isbn).first()
+    has_book = ""
+    user_email = request.cookies.get('user')
+    print(f"User Email is {user_email}")
     if 'user' in request.cookies:
         user_email = request.cookies.get('user')
         print(f"User Email is {user_email}")
@@ -591,9 +594,10 @@ def login():
     return response
 
 
-@app.route('/user/', methods=['GET'])
+@app.route('/user/', methods=['GET', 'OPTIONS'])
 def UserProfile():
     response = create_response_json(json="", request=request)
+    print_request(request)
     if request.method == 'GET':
         if 'loggedin' in request.cookies:
             print("The user is logged in")
@@ -603,13 +607,16 @@ def UserProfile():
                     'name': user.name,
                     'username': user.username,
                     'email': user.email,
-                    'address': user.address
+                    'address': user.address,
                 }
                 response = create_response_json(json=(jsonify(u)), request=request)
             else:
                 print("The user does not exist")
         else:
             print("The user is not logged in")
+    elif request.method == 'OPTIONS':
+        response = create_response_options(request=request)
+    print_response(response)
     return response
 
 

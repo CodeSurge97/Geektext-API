@@ -1,6 +1,6 @@
 import json
 from geektext.models import *
-from geektext import db
+from geektext import db, bcrypt
 from datetime import date
 import random
 
@@ -38,7 +38,8 @@ def addFromJson():
         print(f"adding book {b.title}")
 
     #Create some users
-    user1 = User(name='Tomas Ortega', username='tomsOrtega', email='torte007@fiu.edu', password='1234567', address='7 Pumpkin Hill St. Fresh Meadows, NY 11365')
+    ps1 = bcrypt.generate_password_hash('1234567').decode('utf-8')
+    user1 = User(name='Tomas Ortega', username='tomsOrtega', email='torte007@fiu.edu', password=ps1, address='7 Pumpkin Hill St. Fresh Meadows, NY 11365')
     user2 = User(name='Pavlina Richards', username='anserinepavlina', email='pavlina_donald@gmail.com', password='28974293', address='9607 Wentworth Drive Muskogee, OK 74403')
     user3 = User(name="Jose O'Connor", username='ashystephen', email='stephenoconnor17@gmail.com', password='787324', address='6 SE. Cherry Hill Ave. Glendale, AZ 85302')
     user4 = User(name='Justyne Henrietta', username='boldjustyne', email='crunchyjustyne@gmail.com', password='23948529', address='65 Fremont Lane Lady Lake, FL 32159')
