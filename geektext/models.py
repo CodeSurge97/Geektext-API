@@ -81,7 +81,7 @@ class User(db.Model, UserMixin):
     cart = db.relationship('Cart', backref=db.backref('user'), lazy=True)
 
     def __repr__(self):
-        return f"User( email: '{self.email}', username: '{self.username}')"
+        return f"User( email: '{self.email}', username: '{self.username}', password: '{self.password}')"
 
 
 class CreditCard(db.Model):
