@@ -66,8 +66,6 @@ def print_response(response):
     print(100 * "-")
     print("\n\n")
 
-        }
-        book_comments.append(c)
 
 ###
 # Book Details
@@ -573,7 +571,7 @@ def login():
 def UserProfile(username):
     #if 'loggedin' in session:
     #response.get_cookie('user')
-    user = User.query.filter_by(username=username).first()
+    user = User.query.filter_by(email=username).first()
     u = {
     'name': user.name,
     'username': user.username,
