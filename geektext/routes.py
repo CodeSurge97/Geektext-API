@@ -5,7 +5,7 @@ from geektext import app, db, bcrypt
 from geektext.models import *
 from flask_login import login_user, current_user, logout_user, login_required
 import json
-from datetime import date
+from datetime import datetime
 
 def create_response_options(request):
     response = make_response(jsonify(""))
@@ -434,6 +434,12 @@ def search_results(search):
 
 #PROFILE MANAGEMENT STUFF
 
+
+def GetUser(email):
+    user = User.query.filter_by(email=email).first()
+    return user.username
+
+
 @app.route("/register", methods=['GET', 'POST', 'OPTIONS'])
 def register():
     if request.method == 'POST':
@@ -467,8 +473,9 @@ def billing():
         resp = {}
         data = request.get_json()
         user = User.query.filter_by(username=data['username']).first()
+        date_object = datetime.strptime(data['exp_date'], "%m/%Y").date()
         if CreditCard.query.filter_by(card_number=data['card_number']).first() is None:
-            credit = CreditCard(card_type=data["card_type"], cvv=data["cvv"], card_number=data["card_number"], exp_date=data["exp_date"], user_id=user.id)
+            credit = CreditCard(card_type=data["card_type"], cvv=data["cvv"], card_number=data["card_number"], exp_date=date_object, user_id=user.id)
             db.session.add(credit)
             db.session.commit()
             resp['error'] = "null"
@@ -498,6 +505,7 @@ def login():
             if bcrypt.check_password_hash(user.password, data['password']):
                 resp['error'] = "null"
                 resp['loggedin'] = "true"
+                resp['username'] = GetUser(user.email)
             else:
                 resp['error'] = "wrong password"
                 resp['loggedin'] = "false"
@@ -517,11 +525,19 @@ def UserProfile(username):
     #if 'loggedin' in session:
     #response.get_cookie('user')
     user = User.query.filter_by(username=username).first()
+    credit_cards = []
+    for credit_card in user.credit_cards:
+        c = {
+            'card_number' : credit_card.card_number,
+        }
+        credit_cards.append(c)
+   
     u = {
     'name': user.name,
     'username': user.username,
     'email': user.email,
-    'address': user.address
+    'address': user.address,
+    'credit_cards': credit_cards
     }
     response = create_response_json(json=(jsonify(u)), request=request)
     return response
