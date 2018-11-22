@@ -449,11 +449,12 @@ def register():
         #print(f"the email and the password are: {email}, {hashed_password}")
         if User.query.filter_by(email = data['email']).first() is None:
             if User.query.filter_by(username = data['username'] ).first() is None:
-                user = User(name=data['name'], username=data['username'], email=data['email'], password=hashed_password, address=data['address'])
-                db.session.add(user)
-                db.session.commit()
-                resp["error"] = "null"
-                resp["registered"] = "true"
+                if User.query.filter_by(nickname = data['nickname'] ).first() is None:
+                    user = User( nickname=data['nickname'], name=data['name'], username=data['username'], email=data['email'], password=hashed_password, address=data['address'])
+                    db.session.add(user)
+                    db.session.commit()
+                    resp["error"] = "null"
+                    resp["registered"] = "true"
         else:
            print("the email and/or username already exists ")
            resp['error'] = "user already exists"
@@ -533,6 +534,7 @@ def UserProfile(username):
         credit_cards.append(c)
    
     u = {
+    'nickname': user.nickname,
     'name': user.name,
     'username': user.username,
     'email': user.email,
@@ -552,6 +554,7 @@ def EditProfile():
         #print(f"the email and the password are: {email}, {hashed_password}")
         user = User.query.filter_by(username = data['old_username'] ).first()
         if user.username == data['new_username']:
+            user.nickname == data['nickname']
             user.name = data['name']
             user.email = data['email']
             user.password = hashed_password
@@ -561,8 +564,19 @@ def EditProfile():
             resp['error'] = "null"
             resp['updated'] = "true"
         if user.email == data['email']:
+            user.nickname == data['nickname']
             user.name = data['name']
             user.username = data['new_username']
+            user.password = hashed_password
+            user.address = data['address']
+            db.session.add(user)
+            db.session.commit()
+            resp['error'] = "null"
+            resp['updated'] = "true"
+        if user.nickname == data['nickname']:
+            user.name = data['name']
+            user.username = data['new_username']
+            user.email = data['email']
             user.password = hashed_password
             user.address = data['address']
             db.session.add(user)
