@@ -459,49 +459,50 @@ def add_to_cart():
         print('*' * 100)
     return response
 
-# @app.route("/remove-from-cart", methods=['GET', 'POST', 'OPTIONS'])
-# def remove_from_cart():
-#     response = create_response_json(request)
-#     if request.method == 'POST':
-#         print('*' * 100)
-#         print("the method is POST")
-#         data = request.get_json()
-#         response = create_response_json(request)
-#         print(f"Removing the book with isbn: {data['isbn']}")
-#         if 'user' in request.cookies:
-#             print(f"The user is logged in with the email {request.cookies.get('user')}")
-#             user = User.query.filter_by(
-#                 email=request.cookies.get('user')).first()
-#             print(user)
-#             if user and user.cart:
-#                 print("The user has a cart")
-#                 cart = user.cart[0]
-#                 print(cart)
-#                 print(f"Removing the book from the cart with id {cart.id}")
-#                 removed = False
-#                 for item in cart.cart_items:
-#                     print(item)
-#                     if data['isbn'] == item.book_isbn:
-#                         print("The book is already in the shopping cart")
-#                         print("decrementing the count of the item")
-#                         if item.count > 1:
-#                             item.count = item.count - 1
-#                             db.session.commit()
-#                             removed = True
-#                         else:
-#                             db.session.remove(item)
-#                             removed = True
-#                 if not removed:
-#                     print(f"Cant find item with the isbn {data['isbn']}")
-#                 print(f"Success {removed}")
-#         print('*' * 100)
-#     elif request.method == 'OPTIONS':
-#         print('*' * 100)
-#         print("the method is OPTIONS")
-#         print('*' * 100)
-#     return response
+@app.route("/remove-from-cart", methods=['GET', 'POST', 'OPTIONS'])
+def remove_from_cart():
+    response = create_response_json(request)
+    if request.method == 'POST':
+        print('*' * 100)
+        print("the method is POST")
+        data = request.get_json()
+        response = create_response_json(request)
+        print(f"Removing the book with isbn: {data['isbn']}")
+        if 'user' in request.cookies:
+            print(f"The user is logged in with the email {request.cookies.get('user')}")
+            user = User.query.filter_by(
+                email=request.cookies.get('user')).first()
+            print(user)
+            if user and user.cart:
+                print("The user has a cart")
+                cart = user.cart[0]
+                print(cart)
+                print(f"Removing the book from the cart with id {cart.id}")
+                removed = False
+                for item in cart.cart_items:
+                    print(item)
+                    if data['isbn'] == item.book_isbn:
+                        print("The book is already in the shopping cart")
+                        print("decrementing the count of the item")
+                        if item.count > 1:
+                            item.count = item.count - 1
+                            db.session.commit()
+                            removed = True
+                        else:
+                            db.session.remove(item)
+                            removed = True
+                if not removed:
+                    print(f"Cant find item with the isbn {data['isbn']}")
+                print(f"Success {removed}")
+        print('*' * 100)
+    elif request.method == 'OPTIONS':
+        print('*' * 100)
+        print("the method is OPTIONS")
+        print('*' * 100)
+    return response
 
-# Fixing the search function
+
+
 @app.route('/book/<book>', methods=['GET', 'POST'])
 def search(book):
     print(book)
