@@ -378,6 +378,8 @@ def get_cart():
                 c = {
                     'count': item.count,
                     'book': book.title,
+                    'img': book.img,
+                    'isbn': book.isbn
                 }
                 data.append(c)
     json_data = {"items": data, "user_name": user_name}
@@ -456,6 +458,7 @@ def add_to_cart():
     elif request.method == 'OPTIONS':
         print('*' * 100)
         print("the method is OPTIONS")
+        response = create_response_options(request=request)
         print('*' * 100)
     return response
 
@@ -482,14 +485,15 @@ def remove_from_cart():
                 for item in cart.cart_items:
                     print(item)
                     if data['isbn'] == item.book_isbn:
-                        print("The book is already in the shopping cart")
+                        print("The book is in the shopping cart")
                         print("decrementing the count of the item")
                         if item.count > 1:
                             item.count = item.count - 1
                             db.session.commit()
                             removed = True
                         else:
-                            db.session.remove(item)
+                            db.session.delete(item)
+                            db.session.commit()
                             removed = True
                 if not removed:
                     print(f"Cant find item with the isbn {data['isbn']}")
@@ -498,6 +502,7 @@ def remove_from_cart():
     elif request.method == 'OPTIONS':
         print('*' * 100)
         print("the method is OPTIONS")
+        response = create_response_options(request=request)
         print('*' * 100)
     return response
 
