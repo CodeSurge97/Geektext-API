@@ -380,7 +380,8 @@ def get_cart():
                     'count': item.count,
                     'book': book.title,
                     'img': book.img,
-                    'isbn': book.isbn
+                    'isbn': book.isbn,
+                    'price': book.price
                 }
                 data.append(c)
     json_data = {"items": data, "user_name": user_name}
