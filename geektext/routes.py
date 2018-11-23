@@ -88,7 +88,7 @@ def home():
     else:
         print("no sessions")
     response.headers['Content-Type'] = 'application/json'
-    response.headers['Access-Control-Allow-Origin'] = 'http://dev.geektext.com:3000'
+    response.headers['Access-Control-Allow-Origin'] = 'http://geek.localhost.com:3000'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
     return response
 
@@ -232,7 +232,7 @@ def browse_by_author():
             data.append(b)
     response = make_response(jsonify(data))
     response.headers['Content-Type'] = 'application/json'
-    response.headers['Access-Control-Allow-Origin'] = 'http://dev.geektext.com:3000'
+    response.headers['Access-Control-Allow-Origin'] = 'http://geek.localhost.com:3000'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
     return response
 
@@ -252,7 +252,7 @@ def browse_by_descending_price():
         data.append(b)
     response = make_response(jsonify(data))
     response.headers['Content-Type'] = 'application/json'
-    response.headers['Access-Control-Allow-Origin'] = 'http://dev.geektext.com:3000'
+    response.headers['Access-Control-Allow-Origin'] = 'http://geek.localhost.com:3000'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
     return response
 
@@ -271,7 +271,7 @@ def browse_by_ascending_price():
         data.append(b)
     response = make_response(jsonify(data))
     response.headers['Content-Type'] = 'application/json'
-    response.headers['Access-Control-Allow-Origin'] = 'http://dev.geektext.com:3000'
+    response.headers['Access-Control-Allow-Origin'] = 'http://geek.localhost.com:3000'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
     return response
 
@@ -290,7 +290,7 @@ def browse_by_descending_rating():
         data.append(b)
     response = make_response(jsonify(data))
     response.headers['Content-Type'] = 'application/json'
-    response.headers['Access-Control-Allow-Origin'] = 'http://dev.geektext.com:3000'
+    response.headers['Access-Control-Allow-Origin'] = 'http://geek.localhost.com:3000'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
     return response
 
@@ -319,11 +319,11 @@ def get_cart(id):
                 }
                 data.append(c)
         response = make_response(jsonify(data))
-        response.headers['Access-Control-Allow-Origin'] = 'http://dev.geektext.com:3000'
+        response.headers['Access-Control-Allow-Origin'] = 'http://geek.localhost.com:3000'
     elif request.method == 'OPTIONS':
         response = make_response(jsonify(""))
         response.headers['Content-Type'] = 'application/json'
-        response.headers['Access-Control-Allow-Origin'] = 'http://dev.geektext.com:3000'
+        response.headers['Access-Control-Allow-Origin'] = 'http://geek.localhost.com:3000'
         response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-PINGOTHER'
         response.headers['Access-Control-Max-Age'] = '86400'
@@ -378,11 +378,11 @@ def add_to_cart(user_id):
             print(f"creating a new cart item to store the book \n{new_item}")
             db.session.commit()
             session['cart_id'] = id
-        response.headers['Access-Control-Allow-Origin'] = 'http://dev.geektext.com:3000'
+        response.headers['Access-Control-Allow-Origin'] = 'http://geek.localhost.com:3000'
     elif request.method == 'OPTIONS':
         response = make_response(jsonify(""))
         response.headers['Content-Type'] = 'application/json'
-        response.headers['Access-Control-Allow-Origin'] = 'http://dev.geektext.com:3000'
+        response.headers['Access-Control-Allow-Origin'] = 'http://geek.localhost.com:3000'
         response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-PINGOTHER'
         response.headers['Access-Control-Max-Age'] = '86400'
@@ -404,7 +404,7 @@ def browse_by_ascending_rating():
         data.append(b)
     response = make_response(jsonify(data))
     response.headers['Content-Type'] = 'application/json'
-    response.headers['Access-Control-Allow-Origin'] = 'http://dev.geektext.com:3000'
+    response.headers['Access-Control-Allow-Origin'] = 'http://geek.localhost.com:3000'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
     return response
 
@@ -490,7 +490,7 @@ def billing():
         if(resp['validated'] == "true"):
             print("setting the cookie")
             response.set_cookie("validated", "true")
-        response.headers['Access-Control-Allow-Origin'] = 'http://dev.geektext.com:3000'
+        response.headers['Access-Control-Allow-Origin'] = 'http://geek.localhost.com:3000'
         print(response.headers)
     elif request.method == 'OPTIONS':
         response = create_response_options(request=request)
@@ -615,5 +615,5 @@ def logout():
         resp['error'] = 'null'
         resp['loggedin'] = 'false'
         response = make_response((jsonify(resp), 201))
-       
+
     return response
