@@ -376,6 +376,7 @@ def get_cart():
             for item in user.cart[0].cart_items:
                 book = Book.query.get(item.book_isbn)
                 c = {
+                    #Here you need to specify everyhting that you want in the shopping cart items
                     'count': item.count,
                     'book': book.title,
                     'img': book.img,
@@ -488,11 +489,15 @@ def remove_from_cart():
                         print("The book is in the shopping cart")
                         print("decrementing the count of the item")
                         if item.count > 1:
+                            # This part works correctly
                             item.count = item.count - 1
                             db.session.commit()
                             removed = True
                         else:
+                            # And for some reason the remove() funciton was not working, I think it is becasue remove works with a position
+                            # but delete works with an instance of an object so you can use that instead
                             db.session.delete(item)
+                            # Remember to commit after modifying the database
                             db.session.commit()
                             removed = True
                 if not removed:
@@ -502,6 +507,8 @@ def remove_from_cart():
     elif request.method == 'OPTIONS':
         print('*' * 100)
         print("the method is OPTIONS")
+        # Here you need to add this function to avoid CORS problems. This is a really messy subject so just use the funcitons
+        # create_response_options and create_response_json because you need those headers 
         response = create_response_options(request=request)
         print('*' * 100)
     return response
