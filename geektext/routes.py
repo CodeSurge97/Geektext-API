@@ -458,6 +458,7 @@ def add_to_cart():
     elif request.method == 'OPTIONS':
         print('*' * 100)
         print("the method is OPTIONS")
+        response = create_response_options(request=request)
         print('*' * 100)
     return response
 
