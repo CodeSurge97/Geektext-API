@@ -115,7 +115,7 @@ def book_page(isbn):
             'user_id' : comment.user_id,
             'date' : comment.creation_date,
             'username' : comment.user.username,
-            'nickname' : comment.user.name,
+            'nickname' : comment.user.nickname,
             'anon' : comment.anon,
         }
         book_comments.append(c)
@@ -572,7 +572,7 @@ def login():
         response = create_response_json(json=(jsonify(resp)), request=request)
         if(resp['loggedin'] == "true"):
             response.set_cookie("loggedin", "true")
-            response.set_cookie("user", user.username)
+            response.set_cookie("user", user.email)
     elif request.method == 'OPTIONS':
         response = create_response_options(request=request)
     return response
