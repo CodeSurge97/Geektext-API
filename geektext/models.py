@@ -21,10 +21,11 @@ class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     info = db.Column(db.Text)
+    img = db.Column(db.String(100))
     books = db.relationship('Book', secondary=author_book_relationship, backref=db.backref('authors'))
 
     def __repr__(self):
-        return "Author( name: '{self.name}' )"
+        return f"Author( name: '{self.name}' )"
 
 #order_book_relationship is a table that relates an order with the books that is contains
 #the attributes of order_book_relationship are: book_isbn, and order_id
@@ -42,6 +43,7 @@ class Book(db.Model):
     date_pub = db.Column(db.Date)
     genre = db.Column(db.String(100))
     rating = db.Column(db.Float)
+    numRatings = db.Column(db.BigInteger)
     price = db.Column(db.Float)
     img = db.Column(db.String(100))
     pub_info = db.Column(db.Text)
@@ -50,7 +52,7 @@ class Book(db.Model):
     carts = db.relationship('CartItem', backref=db.backref('book'), lazy=True)
 
     def __repr__(self):
-        return "Book( titel: '{self.title}' )"
+        return f"Book( titel: '{self.title}' )"
 
 #The Order table stores the transactions in the store
 #the attributes of the Order table are: id, order_date, books, user_id, and you can also
@@ -62,7 +64,7 @@ class Order(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
-        return "Order( orderID: {self.id}, userID: {self.user_id}, date: {self.order_date})"
+        return f"Order( orderID: {self.id}, userID: {self.user_id}, date: {self.order_date})"
 
 #The User table stores the users in the site
 #the attributes of the User table are: id, name, username, email, password, address, orders, comments.
@@ -79,21 +81,20 @@ class User(db.Model, UserMixin):
     cart = db.relationship('Cart', backref=db.backref('user'), lazy=True)
 
     def __repr__(self):
-        return "User( email: '{self.email}', username: '{self.username}')"
+        return f"User( email: '{self.email}', username: '{self.username}')"
 
 
 class CreditCard(db.Model):
-
     id = db.Column(db.Integer, primary_key=True)
     card_type = db.Column(db.String(20))
     # I actually don't know if this cvv attribute shoult be a string or an Integer
+    card_number = db.Column(db.String(20), unique=True)
     cvv = db.Column(db.Integer)
-    card_number = db.Column(db.String(16), unique=True)
     exp_date = db.Column(db.Date)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
-        return "CreditCard( card_number: '{self.card_number[:4]}', user: '{self.user.name}')"
+        return f"CreditCard( card_number: '{self.card_number[:4]}', user: '{self.user.name}')"
 
 
 #The Comment table stores the comments for each book
@@ -102,13 +103,14 @@ class CreditCard(db.Model):
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text)
-    creation_date = db.Column(db.Date)
+    creation_date = db.Column(db.Text)
     rating = db.Column(db.Float)
     book_isbn = db.Column(db.BigInteger, db.ForeignKey('book.isbn'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    anon = db.Column(db.Integer)
 
     def __repr__(self):
-        return "Comment( commentID: '{self.id}', book: '{self.book_isbn}', userID: '{self.user_id}')"
+        return f"Comment( commentID: '{self.id}', rating: '{self.rating}', content: '{self.content}', book: '{self.book_isbn}', userID: '{self.user_id}', anon: '{self.anon}')"
 
 
 class CartItem(db.Model):
@@ -118,7 +120,7 @@ class CartItem(db.Model):
     book_isbn = db.Column(db.Integer, db.ForeignKey('book.isbn'))
 
     def __repr__(self):
-        return "CartItem( id: '{self.id}', cart_id: '{self.cart_id}', book_isbn: '{self.book_isbn}', count: '{self.count}')"
+        return f"CartItem( id: '{self.id}', cart_id: '{self.cart_id}', book_isbn: '{self.book_isbn}', count: '{self.count}')"
 
 class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -127,4 +129,4 @@ class Cart(db.Model):
     cart_items = db.relationship('CartItem', backref=db.backref('cart'), lazy=True)
 
     def __repr__(self):
-        return "ShoppingCart( cart_id: '{self.id}', user_id: '{self.user_id}')"
+        return f"ShoppingCart( cart_id: '{self.id}', user_id: '{self.user_id}')"

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
+
+
+
 	{% block content %}
 	<head>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
-
 		{% if title %}
 		<title>
 	        <title>{{ title }}</title>
@@ -13,8 +13,17 @@
 	    {% endif %}</title>
 	</head>
 	<body>
-
-	    </ul>
 	</body>
+	<!-- 	{% from "_formhelpers.html" import render_field %}
+	<form method=post>
+	  	<dl>
+		    {{ render_field(form.select) }}
+		    <p>
+		    {{ render_field(form.search) }}
+	  	</dl>
+	  	<p><input type=submit value=Search>
+	</form> -->
+
 	{% endblock %}
 </html>
+
