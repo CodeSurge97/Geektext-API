@@ -489,6 +489,12 @@ def search(book):
 ###
 
 
+
+def GetUser(email):
+    user = User.query.filter_by(email=email).first()
+    return user.username
+
+
 @app.route("/register", methods=['GET', 'POST', 'OPTIONS'])
 def register():
     if request.method == 'POST':
@@ -498,11 +504,12 @@ def register():
         #print(f"the email and the password are: {email}, {hashed_password}")
         if User.query.filter_by(email = data['email']).first() is None:
             if User.query.filter_by(username = data['username'] ).first() is None:
-                user = User(name=data['name'], username=data['username'], email=data['email'], password=hashed_password, address=data['address'])
-                db.session.add(user)
-                db.session.commit()
-                resp["error"] = "null"
-                resp["registered"] = "true"
+                if User.query.filter_by(nickname = data['nickname'] ).first() is None:
+                    user = User( nickname=data['nickname'], name=data['name'], username=data['username'], email=data['email'], password=hashed_password, address=data['address'])
+                    db.session.add(user)
+                    db.session.commit()
+                    resp["error"] = "null"
+                    resp["registered"] = "true"
         else:
            print("the email and/or username already exists ")
            resp['error'] = "user already exists"
@@ -523,8 +530,9 @@ def billing():
         resp = {}
         data = request.get_json()
         user = User.query.filter_by(username=data['username']).first()
+        date_object = datetime.strptime(data['exp_date'], "%m/%Y").date()
         if CreditCard.query.filter_by(card_number=data['card_number']).first() is None:
-            credit = CreditCard(card_type=data["card_type"], cvv=data["cvv"], card_number=data["card_number"], exp_date=data["exp_date"], user_id=user.id)
+            credit = CreditCard(card_type=data["card_type"], cvv=data["cvv"], card_number=data["card_number"], exp_date=date_object, user_id=user.id)
             db.session.add(credit)
             db.session.commit()
             resp['error'] = "null"
@@ -538,7 +546,7 @@ def billing():
         if(resp['validated'] == "true"):
             print("setting the cookie")
             response.set_cookie("validated", "true")
-        response.headers['Access-Control-Allow-Origin'] = 'http://dev.geektext.com:3000'
+        response.headers['Access-Control-Allow-Origin'] = 'http://geek.localhost.com:3000'
         print(response.headers)
     elif request.method == 'OPTIONS':
         response = create_response_options(request=request)
@@ -554,6 +562,7 @@ def login():
             if bcrypt.check_password_hash(user.password, data['password']):
                 resp['error'] = "null"
                 resp['loggedin'] = "true"
+                resp['username'] = GetUser(user.email)
             else:
                 resp['error'] = "wrong password"
                 resp['loggedin'] = "false"
@@ -572,12 +581,21 @@ def login():
 def UserProfile(username):
     #if 'loggedin' in session:
     #response.get_cookie('user')
-    user = User.query.filter_by(email=username).first()
+    user = User.query.filter_by(username=username).first()
+    credit_cards = []
+    for credit_card in user.credit_cards:
+        c = {
+            'card_number' : credit_card.card_number,
+        }
+        credit_cards.append(c)
+
     u = {
+    'nickname': user.nickname,
     'name': user.name,
     'username': user.username,
     'email': user.email,
-    'address': user.address
+    'address': user.address,
+    'credit_cards': credit_cards
     }
     response = create_response_json(json=(jsonify(u)), request=request)
     return response
@@ -592,6 +610,7 @@ def EditProfile():
         #print(f"the email and the password are: {email}, {hashed_password}")
         user = User.query.filter_by(username = data['old_username'] ).first()
         if user.username == data['new_username']:
+            user.nickname == data['nickname']
             user.name = data['name']
             user.email = data['email']
             user.password = hashed_password
@@ -601,8 +620,19 @@ def EditProfile():
             resp['error'] = "null"
             resp['updated'] = "true"
         if user.email == data['email']:
+            user.nickname == data['nickname']
             user.name = data['name']
             user.username = data['new_username']
+            user.password = hashed_password
+            user.address = data['address']
+            db.session.add(user)
+            db.session.commit()
+            resp['error'] = "null"
+            resp['updated'] = "true"
+        if user.nickname == data['nickname']:
+            user.name = data['name']
+            user.username = data['new_username']
+            user.email = data['email']
             user.password = hashed_password
             user.address = data['address']
             db.session.add(user)

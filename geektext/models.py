@@ -70,6 +70,7 @@ class Order(db.Model):
 #the attributes of the User table are: id, name, username, email, password, address, orders, comments.
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+    nickname = db.Column(db.String(15), unique=True)
     name = db.Column(db.String(30), nullable=False)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
