@@ -185,7 +185,6 @@ def update_average_rating(book_isbn):
     averageRating = db.session.query(db.func.avg(Comment.rating)).filter(Comment.book_isbn == book_isbn).scalar()
     db.session.execute("UPDATE book SET rating = :ar WHERE isbn = :bi", {'ar' : averageRating, 'bi' : book_isbn})
 
-
 def update_numRatings(book_isbn):
     numRatings = db.session.query(db.func.count(Comment.rating)).filter(Comment.book_isbn == book_isbn).scalar()
     db.session.execute("UPDATE book SET numRatings = :nr WHERE isbn = :bi", {'nr' : numRatings, 'bi' : book_isbn})
@@ -378,8 +377,12 @@ def get_cart():
             for item in user.cart[0].cart_items:
                 book = Book.query.get(item.book_isbn)
                 c = {
+                    #Here you need to specify everyhting that you want in the shopping cart items
                     'count': item.count,
                     'book': book.title,
+                    'img': book.img,
+                    'isbn': book.isbn,
+                    'price': book.price
                 }
                 data.append(c)
     json_data = {"items": data, "user_name": user_name}
@@ -461,6 +464,57 @@ def add_to_cart():
         response = create_response_options(request=request)
         print('*' * 100)
     return response
+
+@app.route("/remove-from-cart", methods=['GET', 'POST', 'OPTIONS'])
+def remove_from_cart():
+    response = create_response_json(request)
+    if request.method == 'POST':
+        print('*' * 100)
+        print("the method is POST")
+        data = request.get_json()
+        response = create_response_json(request)
+        print(f"Removing the book with isbn: {data['isbn']}")
+        if 'user' in request.cookies:
+            print(f"The user is logged in with the email {request.cookies.get('user')}")
+            user = User.query.filter_by(
+                email=request.cookies.get('user')).first()
+            print(user)
+            if user and user.cart:
+                print("The user has a cart")
+                cart = user.cart[0]
+                print(cart)
+                print(f"Removing the book from the cart with id {cart.id}")
+                removed = False
+                for item in cart.cart_items:
+                    print(item)
+                    if data['isbn'] == item.book_isbn:
+                        print("The book is in the shopping cart")
+                        print("decrementing the count of the item")
+                        if item.count > 1:
+                            # This part works correctly
+                            item.count = item.count - 1
+                            db.session.commit()
+                            removed = True
+                        else:
+                            # And for some reason the remove() funciton was not working, I think it is becasue remove works with a position
+                            # but delete works with an instance of an object so you can use that instead
+                            db.session.delete(item)
+                            # Remember to commit after modifying the database
+                            db.session.commit()
+                            removed = True
+                if not removed:
+                    print(f"Cant find item with the isbn {data['isbn']}")
+                print(f"Success {removed}")
+        print('*' * 100)
+    elif request.method == 'OPTIONS':
+        print('*' * 100)
+        print("the method is OPTIONS")
+        # Here you need to add this function to avoid CORS problems. This is a really messy subject so just use the funcitons
+        # create_response_options and create_response_json because you need those headers
+        response = create_response_options(request=request)
+        print('*' * 100)
+    return response
+
 
 
 # Fixing the search function
@@ -671,5 +725,4 @@ def logout():
         resp['error'] = 'null'
         resp['loggedin'] = 'false'
         response = make_response((jsonify(resp), 201))
-
     return response

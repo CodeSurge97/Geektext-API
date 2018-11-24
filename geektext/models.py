@@ -119,9 +119,10 @@ class CartItem(db.Model):
     count = db.Column(db.Integer)
     cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'))
     book_isbn = db.Column(db.Integer, db.ForeignKey('book.isbn'))
+    price = db.Column(db.Integer)
 
     def __repr__(self):
-        return f"CartItem( id: '{self.id}', cart_id: '{self.cart_id}', book_isbn: '{self.book_isbn}', count: '{self.count}')"
+        return f"CartItem( id: '{self.id}', cart_id: '{self.cart_id}', book_isbn: '{self.book_isbn}', count: '{self.count}', price: '{self.price}')"
 
 class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True)
