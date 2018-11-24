@@ -133,7 +133,7 @@ def book_page(isbn):
         'description' : book.book_description,
         'comments' : book_comments,
         'publisher' : book.pub_info,
-        'date_pub' : book.date_pub.strftime("%Y-%m-%d"),
+        'date_pub' : book.date_pub,
         'hasBook' : has_book
         }
     response = create_response_json(request=request, json=jsonify(b))
