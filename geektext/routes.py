@@ -669,8 +669,8 @@ def EditProfile():
             user.email = data['email']
             user.password = hashed_password
             user.address = data['address']
-            db_session.add(user)
-            db_session.commit()
+            db.session.add(user)
+            db.session.commit()
             resp['error'] = "null"
             resp['updated'] = "true"
         if user.email == data['email']:
