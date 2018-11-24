@@ -43,6 +43,7 @@ class Book(db.Model):
     date_pub = db.Column(db.Date)
     genre = db.Column(db.String(100))
     rating = db.Column(db.Float)
+    numRatings = db.Column(db.BigInteger)
     price = db.Column(db.Float)
     img = db.Column(db.String(100))
     pub_info = db.Column(db.Text)
@@ -69,6 +70,7 @@ class Order(db.Model):
 #the attributes of the User table are: id, name, username, email, password, address, orders, comments.
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+    nickname = db.Column(db.String(15), unique=True)
     name = db.Column(db.String(30), nullable=False)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -80,16 +82,15 @@ class User(db.Model, UserMixin):
     cart = db.relationship('Cart', backref=db.backref('user'), lazy=True)
 
     def __repr__(self):
-        return f"User( email: '{self.email}', username: '{self.username}')"
+        return f"User( email: '{self.email}', username: '{self.username}', password: '{self.password}')"
 
 
 class CreditCard(db.Model):
-
     id = db.Column(db.Integer, primary_key=True)
     card_type = db.Column(db.String(20))
     # I actually don't know if this cvv attribute shoult be a string or an Integer
+    card_number = db.Column(db.String(20), unique=True)
     cvv = db.Column(db.Integer)
-    card_number = db.Column(db.String(16), unique=True)
     exp_date = db.Column(db.Date)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
@@ -103,13 +104,14 @@ class CreditCard(db.Model):
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text)
-    creation_date = db.Column(db.Date)
+    creation_date = db.Column(db.Text)
     rating = db.Column(db.Float)
     book_isbn = db.Column(db.BigInteger, db.ForeignKey('book.isbn'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    anon = db.Column(db.Integer)
 
     def __repr__(self):
-        return f"Comment( commentID: '{self.id}', book: '{self.book_isbn}', userID: '{self.user_id}')"
+        return f"Comment( commentID: '{self.id}', rating: '{self.rating}', content: '{self.content}', book: '{self.book_isbn}', userID: '{self.user_id}', anon: '{self.anon}')"
 
 
 class CartItem(db.Model):
@@ -117,9 +119,10 @@ class CartItem(db.Model):
     count = db.Column(db.Integer)
     cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'))
     book_isbn = db.Column(db.Integer, db.ForeignKey('book.isbn'))
+    price = db.Column(db.Integer)
 
     def __repr__(self):
-        return f"CartItem( id: '{self.id}', cart_id: '{self.cart_id}', book_isbn: '{self.book_isbn}', count: '{self.count}')"
+        return f"CartItem( id: '{self.id}', cart_id: '{self.cart_id}', book_isbn: '{self.book_isbn}', count: '{self.count}', price: '{self.price}')"
 
 class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True)
