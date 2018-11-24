@@ -40,7 +40,7 @@ order_book_relationship = db.Table('order_book_relationship',
 class Book(db.Model):
     isbn = db.Column(db.BigInteger, primary_key=True)
     title = db.Column(db.String(100), unique=True, nullable=False)
-    date_pub = db.Column(db.Date)
+    date_pub = db.Column(db.String(100))
     genre = db.Column(db.String(100))
     rating = db.Column(db.Float)
     numRatings = db.Column(db.BigInteger)

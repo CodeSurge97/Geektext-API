@@ -16,7 +16,8 @@ def create():
     print("creating new tables")
 
 def get_random_date():
-    d = date(year=randint(1999,2017), day=randint(1,30), month=randint(1,12))
+    d = date(year=randint(1999,2017), day=randint(1,27), month=randint(1,12))
+    d.isoformat()
     return d
 
 def addFromJson():

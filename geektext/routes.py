@@ -84,7 +84,8 @@ def home(page, per_page):
              'price': book.price,
              'img': url_for('static', filename=book.img),
              'author': book.authors[0].name,
-             'description': book.book_description, }
+             'description': book.book_description,
+             'date': book.date_pub }
         data.append(b)
     json_res = {'books': data, 'totalNum': books.total}
     response = create_response_json(request=request, json=jsonify(json_res))
