@@ -572,7 +572,7 @@ def register():
         response = create_response_json(json=(jsonify(resp)), request=request)
         if(resp['registered'] == "true"):
             response.set_cookie("loggedin", "true")
-            response.set_cookie("user", data["username"])
+            response.set_cookie("user", data["email"])
     elif request.method == 'OPTIONS':
         response = create_response_options(request=request)
     return response
@@ -713,7 +713,7 @@ def EditProfile():
         response = create_response_json(json=(jsonify(resp)), request=request)
         if(resp['updated'] == "true"):
             response.set_cookie("loggedin", "true")
-            response.set_cookie("user", data["new_username"])
+            response.set_cookie("user", user.email)
     elif request.method == 'OPTIONS':
         response = create_response_options(request=request)
     return response
