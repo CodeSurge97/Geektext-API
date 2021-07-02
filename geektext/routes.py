@@ -26,7 +26,7 @@ def create_response_json(request, json=""):
         response.headers['Access-Control-Allow-Origin'] = request.headers['Origin']
     except:
         print("we have an error with heading 'Access-Control-Allow-Origin'")
-        response.headers['Access-Control-Allow-Origin'] = 'http://geek.localhost.com:3000'
+        response.headers['Access-Control-Allow-Origin'] = 'https://geektext00.web.app'
     response.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
     return response
 
@@ -82,7 +82,7 @@ def home(page, per_page):
              'genre': book.genre,
              'rating': book.rating,
              'price': book.price,
-             'img': url_for('static', filename=book.img),
+             'img': 'guarded-cliffs-60992.herokuapp.com/static/images' + book.img,
              'author': book.authors[0].name,
              'description': book.book_description,
              'date': book.date_pub }
