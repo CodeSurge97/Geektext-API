@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+
+
+	{% block content %}
+	<head>
+		{% if title %}
+		<title>
+	        <title>{{ title }}</title>
+	        {% else %}
+	        <title>Geek Text</title>
+	    {% endif %}</title>
+	    {% if current_user.is_authenticated() %}
+	    <li>    
+	    	<a href="{{ url_for('UserProfile', username=current_user.username) }}">        
+	    	   Profile    
+	        </a>
+	    </li>
+	    {% endif %}
+	</head>
+	<body>
+	</body>
+	<!-- 	{% from "_formhelpers.html" import render_field %}
+	<form method=post>
+	  	<dl>
+		    {{ render_field(form.select) }}
+		    <p>
+		    {{ render_field(form.search) }}
+	  	</dl>
+	  	<p><input type=submit value=Search>
+	</form> -->
+
+	{% endblock %}
+</html>
+

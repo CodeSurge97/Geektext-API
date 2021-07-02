@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+	<title>Search Results</title>
+</head>
+<body>
+	{% for b in rating %}
+    <h2> Rating: {{ b.rating }}/5 - {{ b.title }}</h2>
+    <img src="{{ url_for('static', filename=b.img) }}" alt="{{b.img}}" width="125" height="150" />
+    <p> Author: {{ b.name }}</p>
+    <p> Price: {{ b.price }} </p>
+    <p> Genre: {{ b.genre }} </p>
+    <p> Average Rating: {{ b.rating }} </p>
+	{% endfor %}
+</body>
+{% endblock %}

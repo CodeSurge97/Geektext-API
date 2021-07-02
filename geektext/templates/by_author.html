@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+	<title>Search Results</title>
+</head>
+<body>
+	{% for a in author %}
+    <h1>Books by: {{ a.name }}</h1>
+    	{% for b in a.books %}
+    		<ul>
+				<div class="box">
+				<img src="{{ url_for('static', filename=b.img) }}" alt="{{b.img}}" width="125" height="150" align="left" hspace="20" /><br>
+				<span style="">
+					<h3>Title: {{ b.title }}</h3>
+					<h3>Rating: {{ b.rating }}/5</h3>
+					<h3>Price: ${{ b.price }}</h3><br></span>
+				</div>
+				
+    		</ul>
+    	{% endfor %}
+	{% endfor %}
+</body>
+{% endblock %}
