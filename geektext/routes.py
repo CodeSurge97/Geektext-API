@@ -23,10 +23,10 @@ def create_response_json(request, json=""):
     response.headers['Access-Control-Allow-Credentials'] = "true"
     response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
     try:
-        response.headers['Access-Control-Allow-Origin'] = 'https://geektext00.web.app/register'
+        response.headers['Access-Control-Allow-Origin'] = request.headers['Origin']
     except:
         print("we have an error with heading 'Access-Control-Allow-Origin'")
-        response.headers['Access-Control-Allow-Origin'] = 'https://geektext00.web.app/register'
+        response.headers['Access-Control-Allow-Origin'] = 'https://geektext00.web.app'
     response.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
     return response
 
