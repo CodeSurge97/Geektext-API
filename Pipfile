@@ -12,6 +12,7 @@ flask-wtf = "*"
 flask-login = "*"
 flask-bcrypt = "*"
 psycopg2 = "*"
+dataclasses = "*"
 
 [dev-packages]
 
