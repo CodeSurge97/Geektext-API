@@ -601,7 +601,7 @@ def billing():
         if(resp['validated'] == "true"):
             print("setting the cookie")
             response.set_cookie("validated", "true")
-        response.headers['Access-Control-Allow-Origin'] = 'https://geektext00.web.app'
+        # response.headers['Access-Control-Allow-Origin'] = 'https://geektext00.web.app'
         print(response.headers)
     elif request.method == 'OPTIONS':
         response = create_response_options(request=request)
