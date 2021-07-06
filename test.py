@@ -56,11 +56,11 @@ def addFromJson():
             User(name='Aiysha Flynn', nickname='Flynn_', username='flynnAiysha', email='flynnAiysha@fiu.edu', password=ps1, address='7 Pumpkin Hill St. Fresh Meadows, NY 11365'),
             User(name='Jasper Kaiser', nickname='Kaiser', username='kaiserJasper', email='kaiserJasper@gmail.com', password=ps2, address='9607 Wentworth Drive Muskogee, OK 74403'),
             User(name="Osian Parks", nickname='Osian11', username='Parks', email='parksandrecreation@gmail.com', password=ps3, address='6 SE. Cherry Hill Ave. Glendale, AZ 85302'),
-            User(name='Albi Montgomery', nickname='Montgomery-Montgomery', username='montgomery', email='Montgomery@gmail.com', password=ps4, address='65 Fremont Lane Lady Lake, FL 32159'),
+            User(name='Albi Montgomery', nickname='Montgomery-a', username='montgomery', email='Montgomery@gmail.com', password=ps4, address='65 Fremont Lane Lady Lake, FL 32159'),
             User(name='Chace Millington', nickname='ChaceTheRapper', username='millington9898', email='mling998@gmail.com', password=ps5, address='40 Bohemia Rd. Muskego, WI 53150')]
     for u in users:
         db.session.add(u)
-        #print(f"adding user {u.name}")
+        print(f"adding user {u.name}")
     comments = ["I am ready to meet my Maker. Whether my Maker is prepared for the great ordeal of meeting me is another matter.",
                 "I feel sorry for people who don't drink. When they wake up in the morning, that's as good as they're going to feel all day.",
                 "Don't want to close my eyes I don't want to fall asleep Cause I'd miss you babe And I don't want to miss a thing Cause even when I dream of you The sweetest dream will never do I'd still miss you babe And I don't want to miss a thing.",
@@ -92,7 +92,7 @@ def addFromJson():
 
     def update_numRatings(book_isbn):
         numRatings = db.session.query(db.func.count(Comment.rating)).filter(Comment.book_isbn == book_isbn).scalar()
-        db.session.execute("UPDATE book SET numRatings = :nr WHERE isbn = :bi", {'nr' : numRatings, 'bi' : book_isbn})
+        db.session.execute('UPDATE book SET "numRatings" = :nr WHERE isbn = :bi', {'nr' : numRatings, 'bi' : book_isbn})
 
     for i in range(5, 10):
         order2 = Order(order_date=date.today())

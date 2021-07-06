@@ -1,3 +1,4 @@
+from enum import unique
 from geektext import db, login_manager
 from flask_login import UserMixin
 
@@ -19,7 +20,7 @@ author_book_relationship = db.Table('author_book_relationship',
 
 class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(100),unique=True)
     info = db.Column(db.Text)
     img = db.Column(db.String(100))
     books = db.relationship('Book', secondary=author_book_relationship, backref=db.backref('authors'))
