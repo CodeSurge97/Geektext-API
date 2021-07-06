@@ -563,8 +563,8 @@ def register():
                     user = User( nickname=data['nickname'], name=data['name'], username=data['username'], email=data['email'], password=hashed_password, address=data['address'])
                     db.session.add(user)
                     db.session.commit()
-                    resp["error"] = "null"
-                    resp["registered"] = "true"
+                    resp['error'] = "null"
+                    resp['registered'] = "true"
         else:
            print("the email and/or username already exists ")
            resp['error'] = "user already exists"
