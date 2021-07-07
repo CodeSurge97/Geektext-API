@@ -664,6 +664,7 @@ def EditProfile():
         hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
         #print(f"the email and the password are: {email}, {hashed_password}")
         user = User.query.filter_by(username = data['old_username'] ).first()
+        print(user)
         if user.username == data['new_username']:
             user.nickname == data['nickname']
             user.name = data['name']

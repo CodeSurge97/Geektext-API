@@ -119,7 +119,7 @@ class CartItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     count = db.Column(db.Integer)
     cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'))
-    book_isbn = db.Column(db.Integer, db.ForeignKey('book.isbn'))
+    book_isbn = db.Column(db.BigInteger, db.ForeignKey('book.isbn'))
     price = db.Column(db.Integer)
 
     def __repr__(self):
