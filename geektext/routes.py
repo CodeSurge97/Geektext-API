@@ -417,6 +417,7 @@ def add_to_cart():
         print('*' * 100)
         print("the method is POST")
         data = request.get_json()
+        print(data);
         response = create_response_json(request)
         print(f"adding the book with isbn: {data['isbn']}")
         if 'user' in request.cookies:
