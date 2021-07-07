@@ -424,7 +424,7 @@ def add_to_cart():
             print(f"The user is logged in with the email {request.cookies.get('user')}")
             user = User.query.filter_by(
                 email=request.cookies.get('user')).first()
-            print(user)
+            print(request.cookies.get('user')).first())
             if user and user.cart:
                 print("The user has a cart")
                 cart = user.cart[0]
@@ -443,7 +443,7 @@ def add_to_cart():
                     print(f"Cant find item with the isbn {data['isbn']}")
                     print("Creating a new item with the isbn")
                     new_item = CartItem(
-                        count=1, cart_id=user.cart[0].id, book_isbn=data["isbn"])
+                        count=1, cart_id=user.cart[0].id, book_isbn=data["isbn"], price=9.95)
                     db.session.add(new_item)
                     db.session.commit()
                     for item in user.cart[0].cart_items:
