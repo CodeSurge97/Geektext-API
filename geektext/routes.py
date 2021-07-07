@@ -424,7 +424,6 @@ def add_to_cart():
             print(f"The user is logged in with the email {request.cookies.get('user')}")
             user = User.query.filter_by(
                 email=request.cookies.get('user')).first()
-            print(request.cookies.get('user')).first())
             if user and user.cart:
                 print("The user has a cart")
                 cart = user.cart[0]
