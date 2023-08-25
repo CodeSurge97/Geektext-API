@@ -661,6 +661,7 @@ def EditProfile():
     if request.method == 'POST':
         resp = {}
         data = request.get_json()
+        print(data)
         hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
         #print(f"the email and the password are: {email}, {hashed_password}")
         user = User.query.filter_by(username = data['old_username'] ).first()
