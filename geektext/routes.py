@@ -82,7 +82,7 @@ def home(page, per_page):
              'genre': book.genre,
              'rating': book.rating,
              'price': book.price,
-             'img': book.img,
+             'img':  url_for('static', filename=book.img),
              'author': book.authors[0].name,
              'description': book.book_description,
              'date': book.date_pub }
